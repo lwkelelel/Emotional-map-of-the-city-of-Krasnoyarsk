@@ -254,3 +254,36 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+<body id="body">
+    <div class="top-bar">
+        <div class="logo">🗺 Эмоциональная карта города Красноярска</div>
+        <div class="nav-links">
+            <a href="/">Карта</a>
+            <a href="/ideas">Идеи</a>
+            <a href="/suggest">Предложить</a>
+            <a href="/about">О проекте</a>
+            <a href="/settings">Настройки</a>
+            <a href="/sql_table">📊 БД</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="content-wrapper">
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 | МАУ "ЦБС им. Горького" | Эмоциональная карта города Красноярска
+    </div>
+
