@@ -1,3 +1,4 @@
+
 {% block content %}
 <div class="sql-container">
     <h1>🗄️ Структура базы данных</h1>
@@ -145,4 +146,88 @@ CREATE INDEX idx_votes_ip ON votes(ip_address);</code></pre>
         });
     }
 </script>
+
+{% extends "base.html" %}
+
+{% block title %}Структура базы данных{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sql-container {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 32px;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+    body.light-theme .sql-container {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #e2e8f0;
+    }
+    h1 {
+        color: white;
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+    body.light-theme h1 { color: #1e293b; }
+    .subtitle {
+        color: #94a3b8;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+    .sql-section {
+        margin-bottom: 30px;
+        background: #1e1e2e;
+        border-radius: 16px;
+        padding: 20px;
+    }
+    body.light-theme .sql-section {
+        background: #f1f5f9;
+    }
+    .sql-section h2 {
+        color: #a78bfa;
+        font-size: 18px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    body.light-theme .sql-section h2 {
+        color: #667eea;
+    }
+    pre {
+        background: #0d0d1a;
+        padding: 15px;
+        border-radius: 12px;
+        overflow-x: auto;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        font-size: 13px;
+        color: #e2e8f0;
+        margin: 0;
+    }
+    body.light-theme pre {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+    code {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    .back-btn {
+        display: inline-block;
+        margin-top: 20px;
+    }
+    .copy-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+    .copy-btn:hover { background: #5a67d8; }
+</style>
+
 {% endblock %}
