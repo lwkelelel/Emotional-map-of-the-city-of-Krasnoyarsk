@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Идеи для прогулок — Эмоциональная карта Красноярска{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ideas-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 0 20px;
+        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ideas-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .ideas-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        margin-bottom: 5px;
+        background: linear-gradient(90deg, #ffffff, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    body.light-theme .ideas-title {
+        background: linear-gradient(90deg, #0f172a, #4f46e5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .ideas-subtitle {
+        color: #cbd5e1;
+        font-size: 13px;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+
+    body.light-theme .ideas-subtitle {
+        color: #64748b;
+    }
+
+    .carousel-premium {
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(167, 139, 250, 0.15);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        background: #090714;
+    }
+
+    body.light-theme .carousel-premium {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .carousel-item {
+        height: 550px;
+    }
+
+    .carousel-bg {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-size: cover;
+        background-position: center;
+        transition: transform 7s ease;
+    }
+    .carousel-item.active .carousel-bg {
+        transform: scale(1.06);
+    }
+
+    .carousel-overlay {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 85%;
+        background: linear-gradient(to top, rgba(9, 7, 24, 0.98) 0%, rgba(26, 21, 54, 0.7) 45%, transparent 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 50px 60px;
+    }
+
+    .idea-badge {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-bottom: 15px;
+    }
+
+    .idea-name {
+        font-size: 42px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 15px;
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+
+    .idea-desc {
+        font-size: 16px;
+        color: #cbd5e1;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        max-width: 750px;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+
+    .idea-btn {
+        display: inline-block;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        color: white;
+        text-decoration: none;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+        width: fit-content;
+    }
+    .idea-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(139, 92, 246, 0.6);
+        color: white;
+    }
+
+    .carousel-control-prev, .carousel-control-next {
+        width: 80px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+    }
+    .carousel-control-prev:hover, .carousel-control-next:hover { opacity: 1; }
+
+    .loading-spinner {
+        height: 550px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #a78bfa;
+        background: linear-gradient(135deg, rgba(22, 16, 54, 0.85), rgba(15, 12, 41, 0.9));
+    }
+
+    @media (max-width: 768px) {
+        .carousel-item { height: 450px; }
+        .carousel-overlay { padding: 30px 20px; }
+        .idea-name { font-size: 28px; }
+        .idea-desc { font-size: 14px; }
+        .carousel-control-prev, .carousel-control-next { width: 50px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ideas-container">
+    <div class="ideas-header">
+        <h1 class="ideas-title"><i class="fas fa-magic me-2"></i> Места дня</h1>
+        <p class="ideas-subtitle">Уникальные локации Красноярска, вдохновляющие каждый день</p>
+    </div>
+
+    <div id="ideasCarousel" class="carousel slide carousel-fade carousel-premium" data-bs-ride="carousel" data-bs-interval="6000">
+        <div class="carousel-indicators" id="carouselIndicators"></div>
+
+        <div class="carousel-inner" id="carouselInner">
+            <div class="loading-spinner w-100">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 48px;"></i>
+                <div class="mt-4" style="font-size: 16px; font-weight: 600; color: #cbd5e1;">Сбор дневных рекомендаций и фотографий из Википедии...</div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#ideasCarousel" data-bs-slide="prev" style="display: none;" id="prevBtn">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#ideasCarousel" data-bs-slide="next" style="display: none;" id="nextBtn">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующий</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    async function loadIdeas() {
+        const inner = document.getElementById('carouselInner');
+        const indicators = document.getElementById('carouselIndicators');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        try {
+            const res = await fetch('/api/place_of_day');
+            const places = await res.json();
+
+            if (places.length === 0) {
+                inner.innerHTML = '<div class="loading-spinner w-100 text-muted">В базе пока нет проверенных локаций.</div>';
+                return;
+            }
+
+            inner.innerHTML = '';
+            indicators.innerHTML = '';
+
+            places.forEach((p, index) => {
+                const isActive = index === 0 ? 'active' : '';
+
+                const indicator = document.createElement('button');
+                indicator.type = 'button';
+                indicator.dataset.bsTarget = '#ideasCarousel';
+                indicator.dataset.bsSlideTo = index;
+                if(index === 0) {
+                    indicator.className = 'active';
+                    indicator.ariaCurrent = 'true';
+                }
+                indicators.appendChild(indicator);
+
+                const bgStyle = p.photo_url ? `background-image: url(${p.photo_url}); background-size: cover; background-position: center;` : `background: linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(139, 92, 246, 0.3));`;
+
+                const item = document.createElement('div');
+                item.className = `carousel-item ${isActive}`;
+                item.innerHTML = `
+                    <div class="carousel-bg" style="${bgStyle}"></div>
+                    <div class="carousel-overlay">
+                        <div class="idea-badge">
+                            ${p.category_icon} ${p.category_name}
+                        </div>
+                        <h2 class="idea-name">${p.name}</h2>
+                        <p class="idea-desc">${p.description}...</p>
+                        <a href="/place/${p.id}" class="idea-btn">
+                            <i class="fas fa-map-marked-alt me-1"></i> Изучить атмосферу
+                        </a>
+                    </div>
+                `;
+                inner.appendChild(item);
+            });
+
+            if(places.length > 1) {
+                prevBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+            }
+
+        } catch (e) {
+            console.error('Ошибка:', e);
+            inner.innerHTML = '<div class="loading-spinner w-100 text-danger">Ошибка загрузки рекомендаций. Проверьте соединение.</div>';
+        }
+    }
+
+    window.onload = loadIdeas;
+</script>
+{% endblock %}
