@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель — Эмоциональная Карта Красноярска</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Сайдбар */
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(102, 126, 234, 0.15);
+            box-shadow: 5px 0 25px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .admin-logo {
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .sidebar-header h3 {
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .admin-user {
+            font-size: 11px;
+            color: #4f46e5;
+            background: rgba(99, 102, 241, 0.04);
+            padding: 5px 14px;
+            border-radius: 30px;
+            display: inline-block;
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            padding: 24px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none !important;
+            outline: none !important;
+            text-decoration: none;
+        }
+
+        .nav-item i { font-size: 15px; opacity: 0.7; transition: transform 0.2s; }
+        .nav-item:hover { color: #0f172a; background: rgba(0,0,0,0.02); padding-left: 20px; }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+            color: white !important;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+        }
+        .nav-item.active i { opacity: 1; }
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .main-content {
+            margin-left: 300px;
+            flex-grow: 1;
+            padding: 40px 45px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .welcome-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        }
+
+        .welcome-box h2 { font-size: 25px; font-weight: 800; margin-bottom: 6px; color: #0f172a; letter-spacing: -0.5px; }
+        .welcome-box p { color: #475569 !important; }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: all 0.25s ease;
+        }
+        .stat-card:hover { transform: translateY(-2px); background: #f8fafc; border-color: rgba(102, 126, 234, 0.25); }
+
+        .stat-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .bg-success-blur { background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .bg-danger-blur { background: rgba(239, 68, 68, 0.08); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .bg-info-blur { background: rgba(99, 102, 241, 0.08); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.2); }
+
+        .stat-num { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: #475569; font-weight: 600; }
+
+        .data-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.01);
+            margin-bottom: 30px;
+        }
+
+        .data-card h3 { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .table-responsive-container { border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 20px; }
+
+        /* ТАБЛИЦЫ */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; background: #ffffff; table-layout: fixed; }
+
+        th {
+            background: #f8fafc;
+            color: #4f46e5;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td { padding: 14px 20px; font-size: 14px; color: #334155; border-bottom: 1px solid #f1f5f9; vertical-align: middle; word-wrap: break-word; }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .btn-action-premium {
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none !important;
+            outline: none !important;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        /* СПЕЦИАЛЬНЫЙ РАЗМЕР КНОПОК ТОЛЬКО ДЛЯ РАЗДЕЛА "Локации, опубликованные на карте" */
+        .verified-table-actions .btn-action-premium {
+            padding: 4px 12px !important;
+            font-size: 11px !important;
+            border-radius: 8px !important;
+        }
+
+        .btn-premium-success { background: #10b981; color: white !important; }
+        .btn-premium-success:hover { background: #059669; transform: translateY(-1px); }
+
+        .btn-premium-danger { background: #ef4444; color: white !important; }
+        .btn-premium-danger:hover { background: #dc2626; transform: translateY(-1px); }
+
+        .btn-premium-secondary { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1 !important; }
+        .btn-premium-secondary:hover { background: #e2e8f0; color: #0f172a; }
+
+        /* Компактный размер кнопок модерации для раздела задизлайканных мест */
+        .btn-disliked-edit {
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+        .btn-disliked-edit:hover {
+            background: linear-gradient(135deg, #a78bfa 0%, #4f46e5 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-disliked-delete {
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+            background: rgba(239, 68, 68, 0.05);
+            color: #ef4444 !important;
+            border: 1px solid rgba(239, 68, 68, 0.45) !important;
+        }
+        .btn-disliked-delete:hover {
+            background: #ef4444;
+            color: white !important;
+            border-color: transparent !important;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Статус бэйджа «Текущий» */
+        .system-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: #f3e8ff !important;
+            color: #6b21a8 !important;
+            border: 1px solid #c084fc !important;
+            display: inline-block;
+        }
+
+        /* Коробка схемы данных */
+        .audit-premium-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(102, 126, 234, 0.25);
+            border-radius: 18px;
+            padding: 26px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.02);
+        }
+        .audit-premium-box:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.1);
+        }
+
+        .audit-title-text {
+            color: #0f172a !important;
+            font-weight: 800;
+        }
+
+        .progress { background-color: #e2e8f0; border-radius: 10px; }
+
+        .section { display: none; }
+        .active-section { display: block; animation: tabFadeIn 0.3s ease; }
+        @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sidebar { width: 0; display: none; }
+            .main-content { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo"><i class="fas fa-fingerprint"></i></div>
+                <h3>Панель управления</h3>
+                <span class="admin-user">
+                    <i class="fas fa-shield-alt text-warning me-1"></i>
+                    {{ session.get('admin_username', 'Модератор') }}
+                </span>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-item active" data-tab="stats">
+                    <i class="fas fa-chart-bar"></i> Обзор системы
+                </div>
+                <div class="nav-item" data-tab="pending">
+                    <i class="fas fa-hourglass-half"></i> На модерации
+                    <span class="badge bg-danger ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_pending }}</span>
+                </div>
+                <div class="nav-item" data-tab="disliked">
+                    <i class="fas fa-thumbs-down"></i> Задизлайканные
+                    {% if disliked_places %}
+                    <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ disliked_places|length }}</span>
+                    {% endif %}
+                </div>
+                <div class="nav-item" data-tab="verified">
+                    <i class="fas fa-check-circle"></i> Одобренные точки
+                    <span class="badge bg-success ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_places }}</span>
+                </div>
+                <div class="nav-item" data-tab="complaints">
+                    <i class="fas fa-exclamation-triangle"></i> Жалобы на эмоции
+                    {% if places_with_complaints %}
+                    <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ places_with_complaints|length }}</span>
+                    {% endif %}
+                </div>
+                <a href="/admin/admins" class="nav-item"><i class="fas fa-user-shield"></i> Рабочая группа</a>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="/" class="btn-action-premium btn-premium-secondary w-100 mb-2 justify-content-center">
+                    <i class="fas fa-map me-1"></i> Вернуться к карте
+                </a>
+                <a href="/admin/logout" class="btn-action-premium btn-premium-danger w-100 justify-content-center">
+                    <i class="fas fa-sign-out-alt me-1"></i> Выйти из сессии
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{% if category == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                                <span>{{ message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div id="tab-stats" class="section active-section">
+                <div class="welcome-box d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h2>Приветствуем, {{ session.get('admin_username') }}!</h2>
+                        <p class="mb-0">
+                            Сводные показатели культурно-атмосферного наполнения интерактивной карты города Красноярска.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="/export/kml" class="btn-action-premium btn-premium-success" style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16,185,129,0.25); font-size:14px;">
+                            <i class="fas fa-download me-2"></i> Экспорт карты в KML
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-success-blur"><i class="fas fa-map-marked-alt"></i></div>
+                            <div>
+                                <div class="stat-num">{{ total_places }}</div>
+                                <div class="stat-label">Опубликовано мест</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-danger-blur"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <div class="stat-num">{{ total_pending }}</div>
+                                <div class="stat-label">В очереди проверки</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info-blur"><i class="fas fa-users"></i></div>
+                            <div>
+                                <div class="stat-num">{{ admins|length if admins else 1 }}</div>
+                                <div class="stat-label">Модераторов сети</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="data-card">
+                            <h3><i class="fas fa-chart-line text-primary me-2"></i> Плотность emotional слоёв</h3>
+                            <div class="row g-3">
+                                {% for cat in categories_stats %}
+                                <div class="col-md-6">
+                                    <div style="background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span style="font-size:13px; font-weight:600;">{{ cat.icon }} {{ cat.name }}</span>
+                                            <span style="font-size:12px; font-weight:700; opacity:0.8;">{{ cat.count }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar" style="width: {% if (cat.count/cat.max*100) > 100 %}100{% else %}{{ cat.count/cat.max*100 }}{% endif %}%; background-color: {{ cat.color }};"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="data-card">
+                            <h3><i class="fas fa-chart-pie text-warning me-2"></i> Активность по возрастам</h3>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                    <span><i class="fas fa-user text-info me-2"></i> 15-20 лет</span>
+                                    <strong>{{ age_stats['15-20']|default(0) }} точек</strong>
+                                </div>
+                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                    <span><i class="fas fa-user text-success me-2"></i> 21-30 лет</span>
+                                    <strong>{{ age_stats['21-30']|default(0) }} точек</strong>
+                                </div>
+                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                    <span><i class="fas fa-user text-warning me-2"></i> 31-50 лет</span>
+                                    <strong>{{ age_stats['31-50']|default(0) }} точек</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-pending" class="section">
+                <div class="data-card">
+                    <h3><i class="fas fa-hourglass-half text-danger me-2"></i> Новые предложения от жителей</h3>
+                    <div class="table-responsive-container">
+                        {% if pending_places %}
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Категория</th>
+                                    <th>Адрес</th>
+                                    <th>Голоса</th>
+                                    <th>Рассмотрение</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in pending_places %}
+                                <tr>
+                                    <td><strong>{{ p.name }}</strong></td>
+                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                    <td>{{ p.address or 'Координаты зафиксированы' }}</td>
+                                    <td><span class="badge bg-secondary">{{ p.votes_count }}</span></td>
+                                    <td>
+                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-eye"></i> Открыть</a>
+                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-secondary" onclick="return confirm('Удалить предложение?')">🗑️ Отклонить</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="p-5 text-center text-muted fw-bold">☕ Очередь пуста. Все предложенные локации успешно верифицированы!</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-disliked" class="section">
+                <div class="data-card">
+                    <h3><i class="fas fa-thumbs-down text-danger me-2"></i> Места с отрицательным рейтингом (Критика жителей)</h3>
+                    <div class="table-responsive-container">
+                        {% if disliked_places %}
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Название локации</th>
+                                    <th style="width: 20%;">Категория</th>
+                                    <th style="width: 25%;">Адрес</th>
+                                    <th style="width: 10%;">Рейтинг</th>
+                                    <th style="width: 15%;">Модерация</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in disliked_places %}
+                                <tr>
+                                    <td><strong>{{ p.name }}</strong></td>
+                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                    <td>{{ p.address or 'Красноярск' }}</td>
+                                    <td><span class="badge bg-danger px-2 py-1">{{ p.votes_count }}</span></td>
+                                    <td>
+                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-disliked-edit me-1"><i class="fas fa-pen-nib me-1"></i> Исправить</a>
+                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-disliked-delete" onclick="return confirm('Полностью удалить задизлайканное место с карты?')"><i class="fas fa-trash-alt"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="p-5 text-center text-muted fw-bold">☀️ На карте нет мест с отрицательным рейтингом. Жители довольны всеми локациями!</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-verified" class="section">
+                <div class="data-card">
+                    <h3><i class="fas fa-check-circle text-success me-2"></i> Локации, опубликованные на карте</h3>
+                    <div class="table-responsive-container">
+                        {% if verified_places %}
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название</th>
+                                    <th>Атмосфера</th>
+                                    <th>Адрес публикации</th>
+                                    <th>Рейтинг</th>
+                                    <th>Управление</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in verified_places %}
+                                <tr>
+                                    <td>#{{ p.id }}</td>
+                                    <td><strong>{{ p.name }}</strong></td>
+                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                    <td>{{ p.address or 'Красноярск' }}</td>
+                                    <td><span class="badge bg-primary">{{ p.votes_count }}</span></td>
+                                    <td class="verified-table-actions">
+                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1"><i class="fas fa-sliders-h"></i> Редактировать</a>
+                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить точку с карты безвозвратно?')">🗑️ Удалить</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="p-5 text-center text-muted fw-bold">🗺️ Одобренных точек пока нет.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-complaints" class="section">
+                <div class="data-card">
+                    <h3><i class="fas fa-exclamation-triangle text-warning me-2"></i> Жалобы на несоответствие категории</h3>
+                    <div class="table-responsive-container">
+                        {% if places_with_complaints %}
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Локация</th>
+                                    <th>Атмосфера</th>
+                                    <th>Жалобы</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in places_with_complaints %}
+                                <tr>
+                                    <td><strong>{{ p.name }}</strong></td>
+                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                    <td><span class="badge bg-danger">🚨 Репортов: {{ p.complaints_count }}</span></td>
+                                    <td>
+                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-sync-alt"></i> Сменить эмоцию</a>
+                                        {% if session.is_super_admin %}
+                                        <a href="/admin/complaints/clear/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1" onclick="return confirm('Сбросить счётчик жалоб?')"><i class="fas fa-broom"></i> Сбросить</a>
+                                        {% endif %}
+                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Полностью удалить точку с карты?')">🗑️ Удалить</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="p-5 text-center text-muted fw-bold">☀️ Жалоб нет. Все локации соответствуют выбранным эмоциям!</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-admins" class="section">
+                <div class="data-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                        <h3 class="mb-0"><i class="fas fa-users text-primary me-2"></i> Управление доступом рабочей группы</h3>
+                        {% if session.is_super_admin %}
+                        <a href="/admin/admin/create" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #764ba2 0%, #6366f1 100%);">
+                            <i class="fas fa-user-plus me-1"></i> Добавить сотрудника
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="text-warning mb-3 fw-bold" style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-clock me-1"></i> Новые заявки на регистрацию</h5>
+                    <div class="table-responsive-container mb-5">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Логин</th>
+                                    <th>Email</th>
+                                    <th>ФИО Сотрудника</th>
+                                    <th>Статус доступа</th>
+                                    <th>Действия супер-админа</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set pending_count = namespace(value=0) %}
+                                {% for a in admins %}
+                                    {% if not a.is_approved %}
+                                    {% set pending_count.value = pending_count.value + 1 %}
+                                    <tr>
+                                        <td><strong>{{ a.username }}</strong></td>
+                                        <td>{{ a.email }}</td>
+                                        <td>{{ a.full_name or 'Новый кандидат' }}</td>
+                                        <td><span class="badge bg-danger">Ожидает одобрения</span></td>
+                                        <td>
+                                            {% if session.is_super_admin %}
+                                                <a href="/admin/admins/approve/{{ a.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-check"></i> Одобрить доступ</a>
+                                                <a href="/admin/admins/delete/{{ a.id }}" class="btn-action-premium btn-premium-secondary" onclick="return confirm('Отклонить заявку и удалить?')">Отклонить</a>
+                                            {% else %}
+                                                <span class="text-muted small"><i class="fas fa-lock"></i> Нужен Супер-админ</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if pending_count.value == 0 %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted small">Новых заявок на модерацию не поступало.</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="text-success mb-3 fw-bold" style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-user-check me-1"></i> Действующий состав</h5>
+                    <div class="table-responsive-container mb-4">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Логин</th>
+                                    <th>Email</th>
+                                    <th>Имя</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for a in admins %}
+                                    {% if a.is_approved %}
+                                    <tr>
+                                        <td><strong>{{ a.username }}</strong></td>
+                                        <td>{{ a.email }}</td>
+                                        <td>{{ a.full_name or 'Сотрудник ЦБС' }}</td>
+                                        <td>
+                                            {% if a.is_super_admin %}
+                                                <span class="badge text-dark px-2 py-1.5" style="font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);"><i class="fas fa-crown me-1"></i> ⭐ Супер-админ</span>
+                                            {% else %}
+                                                <span class="badge px-2 py-1.5" style="background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);"><i class="fas fa-user-edit me-1"></i> ✅ Админ</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if session.admin_id != a.id %}
+                                                {% if session.is_super_admin %}
+                                                <a href="/admin/admins/delete/{{ a.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Отозвать права и удалить аккаунт?')">
+                                                    <i class="fas fa-trash-alt me-1"></i> 🗑️ Удалить
+                                                </a>
+                                                {% else %}
+                                                <span class="text-muted small"><i class="fas fa-lock"></i> Заблокировано</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="system-status-badge">Текущий</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="audit-premium-box mt-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-9">
+                                <h5 class="fw-bold mb-1 audit-title-text"><i class="fas fa-database me-2"></i> Архитектура связей и structure данных SQL</h5>
+                                <p class="small text-muted mb-0">Безопасный просмотр связанных реляционных схем SQL, триггеров автоматического создания таблиц и активных индексов.</p>
+                            </div>
+                            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                <a href="/sql_table" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #a78bfa 0%, #764ba2 100%); font-size:12px; box-shadow: 0 4px 12px rgba(167,139,250,0.25);">
+                                    <i class="fas fa-code-branch me-1"></i> Схема таблиц SQL
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                if (!tabId) return;
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.section').forEach(section => section.classList.remove('active-section'));
+                const activeSection = document.getElementById(`tab-${tabId}`);
+                if (activeSection) activeSection.classList.add('active-section');
+            });
+        });
+    </script>
+</body>
+</html>
