@@ -1,0 +1,896 @@
+{% extends "base.html" %}
+
+{% block title %}Эмоциональная карта города Красноярска{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { overflow: hidden; }
+
+    .map-container {
+        position: fixed;
+        top: 52px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        z-index: 2;
+    }
+
+    /* ЛЕВАЯ ПАНЕЛЬ */
+    .sidebar {
+        width: 340px;
+        background: linear-gradient(180deg, rgba(19, 14, 43, 0.85) 0%, rgba(26, 17, 54, 0.95) 100%);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        height: 100%;
+        border-right: 1px solid rgba(167, 139, 250, 0.25);
+        box-shadow: 8px 0 35px rgba(0,0,0,0.5);
+        z-index: 10;
+        position: relative;
+        transition: width 0.3s ease;
+        margin-top: 0;
+    }
+    body.light-theme .sidebar { background: rgba(255, 255, 255, 0.9); border-right-color: rgba(102, 126, 234, 0.3); }
+
+    .sidebar.collapsed {
+        width: 0;
+        overflow: hidden;
+        border-right: none;
+    }
+
+    /* Кнопка сворачивания/разворачивания */
+    .toggle-sidebar-btn {
+        position: fixed;
+        left: 340px;
+        top: 68px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        cursor: pointer;
+        z-index: 1001;
+        transition: all 0.3s ease;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+        font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+    }
+
+    .toggle-sidebar-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 18px rgba(102, 126, 234, 0.35);
+    }
+
+    .toggle-sidebar-btn.collapsed {
+        left: 10px;
+    }
+
+    .sidebar-header {
+        padding: 20px 20px 15px 20px;
+        border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+    }
+    .sidebar-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+        font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+        font-weight: 800;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: linear-gradient(90deg, #ffffff, #a78bfa, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    body.light-theme .sidebar-header h2 {
+        background: linear-gradient(90deg, #1e293b, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .sidebar-header p {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 6px;
+    }
+    body.light-theme .sidebar-header p {
+        color: #64748b;
+    }
+
+    .category-scroll-area {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 15px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .category-scroll-area::-webkit-scrollbar { width: 6px; }
+    .category-scroll-area::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .category-scroll-area::-webkit-scrollbar-thumb { background: rgba(167, 139, 250, 0.3); border-radius: 10px; }
+
+    .category-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-radius: 14px;
+        cursor: pointer;
+        background: linear-gradient(135deg, rgba(48, 43, 99, 0.4), rgba(15, 12, 41, 0.2));
+        border: 1px solid rgba(167, 139, 250, 0.15);
+        color: #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .category-item:hover, .category-item.active {
+        transform: translateX(6px);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        border-color: #a78bfa;
+        color: #ffffff;
+        box-shadow: 0 5px 20px rgba(118, 75, 162, 0.5);
+    }
+    body.light-theme .category-item { background: #f8fafc; border-color: #e2e8f0; color: #334155; }
+    body.light-theme .category-item:hover, body.light-theme .category-item.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+
+    .category-info { display: flex; align-items: center; gap: 12px; }
+    .color-indicator-dot {
+        width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 0 8px currentColor;
+    }
+    .category-icon { font-size: 18px; }
+    .category-name { font-size: 14px; font-weight: 600; }
+    .category-count {
+        font-size: 11px; background: rgba(255, 255, 255, 0.1); padding: 4px 10px;
+        border-radius: 20px; color: #cbd5e1; font-weight: 700;
+    }
+    .category-item:hover .category-count, .category-item.active .category-count { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
+
+    /* ОБЛАСТЬ КАРТЫ */
+    .map-wrapper { flex-grow: 1; height: 100%; position: relative; }
+    #map { width: 100%; height: 100%; background: #090718; }
+
+    /* Затемнение карты только в тёмной теме */
+    body:not(.light-theme) #map .ymaps-2-1-79-ground-pane {
+        filter: brightness(0.56) saturate(0.78) contrast(1.08) !important;
+    }
+
+    body:not(.light-theme) #map .ymaps-2-1-79-places-pane {
+        filter: brightness(0.95) saturate(1.05) !important;
+    }
+
+    /* Кнопка выхода из полноэкранного режима */
+    .exit-fullscreen-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        z-index: 500;
+        background: linear-gradient(145deg, rgba(19, 14, 43, 0.85) 0%, rgba(26, 17, 54, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(167, 139, 250, 0.4);
+        border-radius: 40px;
+        padding: 10px 18px;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        opacity: 0;
+        visibility: hidden;
+    }
+    .exit-fullscreen-btn.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+    .exit-fullscreen-btn:hover {
+        transform: translateY(-2px);
+        border-color: #a78bfa;
+        background: rgba(118, 75, 162, 0.8);
+        box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+    }
+    body.light-theme .exit-fullscreen-btn {
+        background: rgba(255, 255, 255, 0.95);
+        color: #1e293b;
+        border-color: rgba(102, 126, 234, 0.4);
+    }
+    body.light-theme .exit-fullscreen-btn:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    /* ВИДЖЕТ ПОГОДЫ */
+    .weather-widget {
+        position: fixed;
+        top: 86px;
+        right: 28px;
+        z-index: 1000;
+        width: 220px;
+        background: linear-gradient(145deg, rgba(19, 14, 43, 0.85) 0%, rgba(26, 17, 54, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(167, 139, 250, 0.4);
+        border-radius: 16px;
+        padding: 10px 14px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 25px rgba(167, 139, 250, 0.15);
+        color: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    .weather-widget:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 35px rgba(167, 139, 250, 0.25);
+    }
+    body.light-theme .weather-widget {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(102, 126, 234, 0.4);
+        color: #1e293b;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    }
+
+    .weather-city-top {
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 8px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        color: #a78bfa;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    body.light-theme .weather-city-top {
+        color: #667eea;
+        border-bottom-color: rgba(0,0,0,0.08);
+    }
+
+    .weather-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .weather-title { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #a78bfa; letter-spacing: 0.5px;}
+
+    .weather-main-data {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2px;
+    }
+
+    .weather-temp {
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+    body.light-theme .weather-temp { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .weather-icon {
+        font-size: 24px;
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    }
+
+    .weather-location-box {
+        position: relative;
+        background: transparent;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        border-radius: 10px;
+        padding: 5px 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 6px;
+    }
+    .weather-location-box:hover {
+        border-color: #a78bfa;
+        background: rgba(167, 139, 250, 0.1);
+    }
+    .selected-district {
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: transparent;
+        color: inherit;
+    }
+    .selected-district i {
+        font-size: 10px;
+        color: #a78bfa;
+    }
+    .chevron-icon {
+        font-size: 9px;
+        color: #a78bfa;
+        transition: transform 0.2s;
+    }
+    .district-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(26, 17, 54, 0.98);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(167, 139, 250, 0.4);
+        border-radius: 10px;
+        margin-top: 5px;
+        padding: 5px 0;
+        z-index: 600;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+        list-style: none;
+    }
+    .weather-location-box:hover .district-dropdown {
+        opacity: 1;
+        visibility: visible;
+    }
+    .weather-location-box:hover .chevron-icon {
+        transform: rotate(180deg);
+    }
+    .district-dropdown li {
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #e2e8f0;
+    }
+    .district-dropdown li i {
+        width: 14px;
+        font-size: 11px;
+        color: #a78bfa;
+    }
+    .district-dropdown li:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    body.light-theme .district-dropdown {
+        background: rgba(255, 255, 255, 0.98);
+        border-color: rgba(102, 126, 234, 0.4);
+    }
+    body.light-theme .district-dropdown li {
+        color: #1e293b;
+    }
+    body.light-theme .district-dropdown li:hover {
+        color: white;
+    }
+    .district-temp {
+        margin-left: auto;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    /* ХИНТ (подсказка при наведении) — читаемый в обеих темах */
+    .ymaps-2-1-79-hint,
+    .ymaps-2-1-79-hint__content {
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(102, 126, 234, 0.35) !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16) !important;
+        color: #1e293b !important;
+        font-family: 'Segoe UI', system-ui, sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        padding: 7px 12px !important;
+        letter-spacing: 0.2px !important;
+        white-space: nowrap !important;
+        pointer-events: none !important;
+    }
+
+    .ymaps-2-1-79-hint *,
+    .ymaps-2-1-79-hint__text,
+    .ymaps-2-1-79-hint__content * {
+        color: #1e293b !important;
+        background: transparent !important;
+    }
+
+    body:not(.light-theme) .ymaps-2-1-79-hint,
+    body:not(.light-theme) .ymaps-2-1-79-hint__content {
+        background: #1e1b4b !important;
+        border: 1px solid rgba(167, 139, 250, 0.45) !important;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45) !important;
+        color: #ffffff !important;
+    }
+
+    body:not(.light-theme) .ymaps-2-1-79-hint *,
+    body:not(.light-theme) .ymaps-2-1-79-hint__text,
+    body:not(.light-theme) .ymaps-2-1-79-hint__content * {
+        color: #ffffff !important;
+        background: transparent !important;
+    }
+
+    /* БАЛУН (окно при клике) — убирает стандартный белый контейнер Яндекс.Карт */
+    .ymaps-2-1-79-balloon,
+    .ymaps-2-1-79-balloon__layout,
+    .ymaps-2-1-79-balloon__content,
+    .ymaps-2-1-79-balloon__tail,
+    .ymaps-2-1-79-balloon__tail:after,
+    .ymaps-2-1-79-balloon__tail:before {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .ymaps-2-1-79-balloon {
+        border-radius: 22px !important;
+        overflow: visible !important;
+    }
+
+    .ymaps-2-1-79-balloon__layout {
+        overflow: visible !important;
+    }
+
+    .ymaps-2-1-79-balloon__content {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ymaps-2-1-79-balloon__content > ymaps,
+    .ymaps-2-1-79-balloon__content > ymaps > ymaps,
+    .ymaps-2-1-79-balloon__content > * {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .ymaps-2-1-79-balloon__tail {
+        display: none !important;
+    }
+
+    .ymaps-2-1-79-balloon__close,
+    .ymaps-2-1-79-balloon__close-button {
+        display: none !important;
+    }
+
+
+    .custom-balloon-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        background: rgba(15, 23, 42, 0.72);
+        color: #ffffff;
+        font-size: 18px;
+        line-height: 22px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 5;
+        transition: all 0.2s ease;
+        font-family: Arial, sans-serif;
+    }
+
+    .custom-balloon-close:hover {
+        background: rgba(102, 126, 234, 0.95);
+        transform: scale(1.08);
+    }
+
+    body.light-theme .custom-balloon-close {
+        background: rgba(255, 255, 255, 0.92);
+        color: #1e293b;
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    body.light-theme .custom-balloon-close:hover {
+        background: #667eea;
+        color: #ffffff;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="map-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Выберите эмоцию</h2>
+            <p>Нажмите на категорию — покажутся только места с этой эмоцией</p>
+        </div>
+
+        <div class="category-scroll-area">
+            {% for cat in categories %}
+            <div class="category-item" data-category-id="{{ cat.id }}" onclick="filterCategory({{ cat.id }}, this)">
+                <div class="category-info">
+                    <span class="color-indicator-dot" style="background: {{ cat.color }}; color: {{ cat.color }};"></span>
+                    <span class="category-icon">{{ cat.icon }}</span>
+                    <span class="category-name">{{ cat.name }}</span>
+                </div>
+                <span class="category-count" id="cat-count-{{ cat.id }}">...</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button class="toggle-sidebar-btn" id="toggleSidebarBtn">❮</button>
+
+    <div class="map-wrapper">
+        <div id="exitFullscreenBtn" class="exit-fullscreen-btn" onclick="exitFullscreen()">
+            <i class="fas fa-compress-alt"></i> Выйти из полноэкранного режима
+        </div>
+
+        <div class="weather-widget" id="weatherMainWidget">
+            <div class="weather-city-top">Красноярск</div>
+            <div class="weather-header">
+                <span class="weather-title"><i class="fas fa-satellite-dish me-1"></i> Метеосводка</span>
+                <span style="font-size:8px; opacity:0.6;"><i class="fas fa-circle text-success me-1" style="font-size:5px;"></i> Live</span>
+            </div>
+
+            <div class="weather-main-data">
+                <span id="weatherTemp" class="weather-temp">--°</span>
+                <span id="weatherIconSlot" class="weather-icon">🌤</span>
+            </div>
+
+            <div class="weather-location-box" id="districtHoverBox">
+                <div class="selected-district" id="selectedDistrictDisplay">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="selectedDistrictName">Погода по районам</span>
+                </div>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+                <ul class="district-dropdown" id="districtDropdownList">
+                    <li data-lat="56.0427" data-lon="92.8804" data-name="Центральный" data-url="https://yandex.ru/pogoda/ru?lat=56.04270935&lon=92.88044739">
+                        <i class="fas fa-building"></i> Центральный
+                        <span class="district-temp" id="tempCentral">--°</span>
+                    </li>
+                    <li data-lat="55.9858" data-lon="92.7981" data-name="Октябрьский" data-url="https://yandex.ru/pogoda/ru?lat=55.98581696&lon=92.7981">
+                        <i class="fas fa-tree"></i> Октябрьский
+                        <span class="district-temp" id="tempOctober">--°</span>
+                    </li>
+                    <li data-lat="56.0756" data-lon="92.9875" data-name="Советский" data-url="https://yandex.ru/pogoda/ru?lat=56.075634&lon=92.98757935">
+                        <i class="fas fa-city"></i> Советский
+                        <span class="district-temp" id="tempSoviet">--°</span>
+                    </li>
+                    <li data-lat="55.9636" data-lon="92.8457" data-name="Свердловский" data-url="https://yandex.ru/pogoda/ru?lat=55.96361542&lon=92.84570313">
+                        <i class="fas fa-industry"></i> Свердловский
+                        <span class="district-temp" id="tempSverdlovsk">--°</span>
+                    </li>
+                    <li data-lat="55.9858" data-lon="92.9664" data-name="Кировский" data-url="https://yandex.ru/pogoda/ru?lat=55.98581696&lon=92.96645355">
+                        <i class="fas fa-water"></i> Кировский
+                        <span class="district-temp" id="tempKirov">--°</span>
+                    </li>
+                    <li data-lat="56.0189" data-lon="92.8354" data-name="Железнодорожный" data-url="https://yandex.ru/pogoda/ru?lat=56.0133934&lon=92.8289566">
+                        <i class="fas fa-train"></i> Железнодорожный
+                        <span class="district-temp" id="tempRailway">--°</span>
+                    </li>
+                    <li data-lat="56.0153" data-lon="93.0245" data-name="Ленинский" data-url="https://yandex.ru/pogoda/ru?lat=56.0153&lon=93.0245">
+                        <i class="fas fa-microchip"></i> Ленинский
+                        <span class="district-temp" id="tempLeninsky">--°</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=ed1e5987-d728-476b-a522-01190c8d6679" type="text/javascript"></script>
+<script>
+    let myMap;
+    let allPlacemarks = [];
+    let currentCategoryId = null;
+    let placemarksCollection;
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const btn = document.getElementById('toggleSidebarBtn');
+
+        sidebar.classList.toggle('collapsed');
+        btn.classList.toggle('collapsed');
+
+        if (sidebar.classList.contains('collapsed')) {
+            btn.innerHTML = '❯';
+            btn.style.left = '10px';
+        } else {
+            btn.innerHTML = '❮';
+            btn.style.left = '340px';
+        }
+
+        setTimeout(() => {
+            if (myMap) myMap.container.fitToViewport();
+        }, 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggleSidebarBtn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleSidebar);
+        }
+    });
+
+    ymaps.ready(init);
+
+    function init() {
+        myMap = new ymaps.Map("map", { center: [56.0153, 92.8932], zoom: 12, controls: [] }, { searchControlProvider: 'yandex#search' });
+
+        placemarksCollection = new ymaps.GeoObjectCollection();
+        myMap.geoObjects.add(placemarksCollection);
+
+        myMap.controls.add('zoomControl', { position: { top: 120, left: 15 } });
+        myMap.controls.add('typeSelector', { position: { top: 80, left: 15 } });
+
+        myMap.events.add('typechange', function() {
+            myMap.container.fitToViewport();
+            showAllPlaces();
+        });
+
+        myMap.events.add('click', function() {
+            myMap.balloon.close();
+        });
+
+        const weatherMainWidget = document.getElementById('weatherMainWidget');
+        if (weatherMainWidget) {
+            weatherMainWidget.addEventListener('click', function(e) {
+                if (!e.target.closest('.district-dropdown') && !e.target.closest('.weather-location-box')) {
+                    window.open('https://yandex.ru/pogoda/ru?lat=56.0106&lon=92.8526', '_blank');
+                }
+            });
+        }
+
+        loadAllPlaces();
+        loadCategoryStats();
+        fetchKrasnoyarskWeather();
+        loadAllDistrictsWeather();
+        setupDistrictDropdown();
+    }
+
+    async function fetchKrasnoyarskWeather() {
+        const tempEl = document.getElementById('weatherTemp');
+        const iconSlot = document.getElementById('weatherIconSlot');
+
+        try {
+            const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=56.0106&longitude=92.8526&current_weather=true&timezone=auto');
+            const data = await response.json();
+            const temp = Math.round(data.current_weather.temperature);
+
+            iconSlot.innerText = temp >= 18 ? "☀️" : (temp <= 0 ? "❄️" : "🌥");
+            tempEl.innerText = `${temp > 0 ? '+' : ''}${temp}°`;
+        } catch {
+            tempEl.innerText = "N/A";
+        }
+    }
+
+    function exitFullscreen() {
+        if (myMap && myMap.controls.get('fullscreenControl')) {
+            const fullscreenControl = myMap.controls.get('fullscreenControl');
+            if (fullscreenControl.isEnabled()) {
+                fullscreenControl.exitFullscreen();
+            }
+        }
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        document.getElementById('exitFullscreenBtn').classList.remove('visible');
+    }
+
+    function setupDistrictDropdown() {
+        const dropdownItems = document.querySelectorAll('#districtDropdownList li');
+        const selectedNameSpan = document.getElementById('selectedDistrictName');
+
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const url = this.dataset.url;
+
+                if (selectedNameSpan) selectedNameSpan.innerText = "Погода по районам";
+
+                if (url) window.open(url, '_blank');
+
+                const weatherWidget = document.querySelector('.weather-widget');
+                if (weatherWidget) {
+                    weatherWidget.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        weatherWidget.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+    }
+
+    async function loadAllDistrictsWeather() {
+        const districts = [
+            { id: 'tempCentral', lat: 56.0427, lon: 92.8804 },
+            { id: 'tempOctober', lat: 55.9858, lon: 92.7981 },
+            { id: 'tempSoviet', lat: 56.0756, lon: 92.9875 },
+            { id: 'tempSverdlovsk', lat: 55.9636, lon: 92.8457 },
+            { id: 'tempKirov', lat: 55.9858, lon: 92.9664 },
+            { id: 'tempRailway', lat: 56.0189, lon: 92.8354 },
+            { id: 'tempLeninsky', lat: 56.0153, lon: 93.0245 }
+        ];
+
+        for (const district of districts) {
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${district.lat}&longitude=${district.lon}&current_weather=true`);
+                const data = await response.json();
+                const temp = Math.round(data.current_weather.temperature);
+                const element = document.getElementById(district.id);
+                if (element) {
+                    element.innerText = `${temp > 0 ? '+' : ''}${temp}°`;
+                }
+            } catch(e) {
+                console.error(`Ошибка загрузки погоды для района ${district.id}:`, e);
+                const element = document.getElementById(district.id);
+                if (element) element.innerText = '--°';
+            }
+        }
+    }
+
+    async function loadCategoryStats() {
+        try {
+            const response = await fetch('/api/categories');
+            const categories = await response.json();
+            categories.forEach(cat => {
+                const el = document.getElementById(`cat-count-${cat.id}`);
+                if (el) el.innerText = `${cat.places_count}/${cat.max_places}`;
+            });
+        } catch (e) { console.error(e); }
+    }
+
+    function createBalloonContent(place) {
+        const isDarkTheme = !document.body.classList.contains('light-theme');
+        const bgColor = isDarkTheme ? '#1e1b4b' : 'white';
+        const textColor = isDarkTheme ? '#f1f5f9' : '#1e293b';
+        const descColor = isDarkTheme ? '#cbd5e1' : '#475569';
+        const addressColor = isDarkTheme ? '#94a3b8' : '#64748b';
+        const btnBg = isDarkTheme ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
+        const btnColor = isDarkTheme ? '#e2e8f0' : '#1e293b';
+
+        return `
+            <div style="position: relative; background: ${bgColor}; color: ${textColor}; border-radius: 20px; overflow: hidden; width: 280px; font-family: 'Segoe UI', system-ui, sans-serif; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
+                <button type="button" onclick="myMap.balloon.close()" style="position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%; border: none; background: ${isDarkTheme ? 'rgba(255,255,255,0.14)' : 'rgba(15,23,42,0.08)'}; color: ${textColor}; cursor: pointer; font-size: 18px; line-height: 28px; text-align: center; font-weight: 700; z-index: 5; transition: all 0.2s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.background='rgba(102,126,234,0.24)'" onmouseout="this.style.transform='scale(1)'; this.style.background='${isDarkTheme ? 'rgba(255,255,255,0.14)' : 'rgba(15,23,42,0.08)'}'">×</button>
+                <div style="padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-right: 28px;">
+                        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, ${place.category_color}40, ${place.category_color}20); display: flex; align-items: center; justify-content: center; font-size: 24px;">${place.category_icon}</div>
+                        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: ${textColor};">${place.name}</h3>
+                    </div>
+                    <p style="margin: 0 0 16px 0; font-size: 13px; line-height: 1.5; color: ${descColor};">${place.description.substring(0, 120)}${place.description.length > 120 ? '...' : ''}</p>
+                    ${place.address ? `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 11px; color: ${addressColor};"><i class="fas fa-map-pin" style="color: #667eea;"></i> <span>${place.address.substring(0, 60)}${place.address.length > 60 ? '...' : ''}</span></div>` : ''}
+                    <div style="display: flex; gap: 10px;">
+                        <a href="/place/${place.id}" target="_self" style="flex: 1; text-align: center; background: ${btnBg}; color: ${btnColor}; padding: 8px 12px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                            <i class="fas fa-info-circle"></i> Подробнее
+                        </a>
+                        <a href="https://yandex.ru/maps/?pt=${place.longitude},${place.latitude}&z=17&l=map" target="_blank" style="flex: 1; text-align: center; background: linear-gradient(135deg, #38bdf8, #2563eb); color: white; padding: 8px 12px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                            <i class="fas fa-map-marked-alt"></i> В картах
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function createHintContent(place) {
+    const wifiIcon = place.wifi_free ? '📶' : '';
+    const wheelchairIcon = place.wheelchair_accessible ? '♿' : '';
+    const amenities = [wifiIcon, wheelchairIcon].filter(icon => icon).join(' ');
+
+    return `
+        <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
+            <span style="font-size: 24px; font-weight: 700; line-height: 1; font-family: 'Segoe UI Symbol', 'Segoe UI', sans-serif;">${place.category_icon}</span>
+            <span style="font-size: 12px; font-weight: 600;">${place.name.length > 30 ? place.name.substring(0, 27) + '...' : place.name}</span>
+            ${amenities ? `<span style="font-size: 11px; margin-left: 4px; background: rgba(102,126,234,0.15); padding: 2px 5px; border-radius: 12px;">${amenities}</span>` : ''}
+        </div>
+    `;
+}
+
+    async function loadAllPlaces() {
+    try {
+        const response = await fetch('/api/places');
+        const places = await response.json();
+        allPlacemarks = [];
+
+        for (const place of places) {
+            const hintContent = createHintContent(place);  // ← place теперь содержит wifi_free и wheelchair_accessible
+
+            const placemark = new ymaps.Placemark(
+                [place.latitude, place.longitude],
+                {
+                    hintContent: hintContent,
+                    balloonContentHeader: '',
+                    balloonContentBody: '',
+                    balloonContentFooter: ''
+                },
+                {
+                    preset: 'islands#circleIcon',
+                    iconColor: place.category_color,
+                    balloonAutoPan: true,
+                    balloonCloseButton: true,
+                    hideIconOnBalloonOpen: false,
+                    balloonOffset: [0, -30],
+                    hintOffset: [0, -20]
+                }
+            );
+
+            placemark.events.add('click', function(e) {
+                e.preventDefault();
+                const balloonContent = createBalloonContent(place);
+                myMap.balloon.open(
+                    placemark.geometry.getCoordinates(),
+                    balloonContent,
+                    {
+                        closeButton: false,
+                        panelMaxMapArea: 0,
+                        autoPan: true,
+                        autoPanDuration: 150
+                    }
+                );
+            });
+
+            placemark.properties.set({
+                categoryId: place.category_id,
+                categoryName: place.category_name,
+                categoryIcon: place.category_icon,
+                placeName: place.name,
+                wifi_free: place.wifi_free,  // ← ДОБАВИТЬ
+                wheelchair_accessible: place.wheelchair_accessible  // ← ДОБАВИТЬ
+            });
+
+            allPlacemarks.push(placemark);
+        }
+        showAllPlaces();
+    } catch (error) { console.error(error); }
+}
+
+    function showAllPlaces() {
+        if (!placemarksCollection) return;
+        placemarksCollection.removeAll();
+        allPlacemarks.forEach(pm => {
+            if (currentCategoryId === null || pm.properties.get('categoryId') === currentCategoryId) {
+                placemarksCollection.add(pm);
+            }
+        });
+    }
+
+    function filterCategory(categoryId, element) {
+        if (currentCategoryId === categoryId) {
+            currentCategoryId = null;
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            showAllPlaces();
+        } else {
+            currentCategoryId = categoryId;
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            showAllPlaces();
+        }
+    }
+</script>
+{% endblock %}
