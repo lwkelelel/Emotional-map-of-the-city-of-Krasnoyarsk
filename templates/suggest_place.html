@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Предложить место{% endblock %}
+
+{% block extra_css %}
+<style>
+    .suggest-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 20px;
+        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .suggest-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .suggest-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        margin-bottom: 5px;
+        background: linear-gradient(90deg, #ffffff, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    body.light-theme .suggest-title {
+        background: linear-gradient(90deg, #0f172a, #4f46e5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .suggest-subtitle {
+        color: #cbd5e1;
+        font-size: 13px;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.4;
+        opacity: 0.8;
+    }
+
+    body.light-theme .suggest-subtitle {
+        color: #64748b;
+    }
+
+    .suggest-card {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 32px;
+        border: 1px solid rgba(167, 139, 250, 0.25);
+    }
+
+    body.light-theme .suggest-card {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #e2e8f0;
+    }
+
+    .form-group { margin-bottom: 20px; position: relative; }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #e2e8f0;
+        font-size: 13px;
+        letter-spacing: 0.3px;
+    }
+    body.light-theme label { color: #334155; }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        font-family: inherit;
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    body.light-theme input, body.light-theme select, body.light-theme textarea {
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #a78bfa;
+        box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+        transform: scale(1.01);
+    }
+
+    .address-input-wrapper {
+        position: relative;
+    }
+
+    .address-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(30, 41, 59, 0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        margin-top: 8px;
+        z-index: 1000;
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        display: none;
+    }
+
+    body.light-theme .address-suggestions {
+        background: white;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .suggestion-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        color: #e2e8f0;
+        font-size: 13px;
+    }
+
+    body.light-theme .suggestion-item {
+        color: #334155;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .suggestion-item:hover {
+        background: rgba(167, 139, 250, 0.2);
+    }
+
+    body.light-theme .suggestion-item:hover {
+        background: #f1f5f9;
+    }
+
+    .suggestion-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .suggestion-address {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .map-selector {
+        margin-top: 8px;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 320px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+    }
+
+    .map-selector:hover {
+        transform: scale(1.01);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    #select-map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .selected-coords {
+        margin-top: 12px;
+        padding: 10px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 16px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-align: center;
+        transition: all 0.3s ease;
+        font-family: monospace;
+    }
+
+    body.light-theme .selected-coords { background: #f1f5f9; color: #64748b; }
+
+    .collapse-panel {
+        margin-bottom: 20px;
+        border: 1px solid rgba(167, 139, 250, 0.25);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .collapse-panel:hover {
+        border-color: rgba(167, 139, 250, 0.5);
+    }
+
+    .collapse-header {
+        background: rgba(30, 41, 59, 0.7);
+        padding: 14px 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    body.light-theme .collapse-header { background: #f1f5f9; }
+
+    .collapse-header:hover { background: rgba(51, 65, 85, 0.9); }
+    body.light-theme .collapse-header:hover { background: #e2e8f0; }
+
+    .collapse-title { 
+        font-weight: 600; 
+        color: white; 
+        font-size: 15px;
+        letter-spacing: 0.3px;
+    }
+    body.light-theme .collapse-title { color: #334155; }
+    
+    .collapse-icon { 
+        color: #a78bfa; 
+        font-size: 16px; 
+        transition: transform 0.3s ease;
+    }
+    
+    .collapse-icon.rotated { transform: rotate(180deg); }
+    
+    .collapse-content { 
+        padding: 20px; 
+        display: none; 
+        background: rgba(15, 23, 42, 0.4);
+    }
+    
+    body.light-theme .collapse-content { background: rgba(248, 250, 252, 0.8); }
+    
+    .collapse-content.show { display: block; animation: slideDown 0.3s ease; }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    .checkbox-group input { width: auto; margin: 0; }
+    .checkbox-group label { margin: 0; cursor: pointer; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    
+    small { 
+        color: #94a3b8; 
+        font-size: 11px; 
+        display: block; 
+        margin-top: 6px;
+        letter-spacing: 0.2px;
+    }
+    body.light-theme small { color: #64748b; }
+
+    .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(139, 92, 246, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="suggest-container">
+    <div class="suggest-header">
+        <h1 class="suggest-title"><i class="fas fa-plus-circle me-2"></i> Предложить место</h1>
+        <p class="suggest-subtitle">Поделитесь локацией, которая вызывает эмоции</p>
+    </div>
+
+    <div class="suggest-card">
+        <form method="POST" id="suggestForm">
+            <div class="form-group">
+                <label>🏷️ Название места *</label>
+                <input type="text" name="name" placeholder="Например: Центральный парк" required>
+            </div>
+
+            <div class="form-group">
+                <label>😊 Категория эмоции *</label>
+                <select name="category_id" required>
+                    <option value="">Выберите категорию</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📝 Описание *</label>
+                <textarea name="description" rows="3" placeholder="Почему это место вызывает такую эмоцию? Расскажите подробнее..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>📍 Местоположение</label>
+                <div class="map-selector">
+                    <div id="select-map" style="width:100%; height:100%;"></div>
+                </div>
+                <div class="selected-coords" id="coords-display">
+                    📍 Кликните на карту, чтобы выбрать место
+                </div>
+                <input type="hidden" name="latitude" id="latitude" value="56.0106">
+                <input type="hidden" name="longitude" id="longitude" value="92.8526">
+                <div class="form-group" style="margin-top: 12px;">
+                    <div class="address-input-wrapper">
+                        <input type="text" name="address" id="address" placeholder="Введите адрес" autocomplete="off">
+                        <div id="addressSuggestions" class="address-suggestions"></div>
+                    </div>
+                    <small>Начните вводить адрес — появятся подсказки. Можно кликнуть на карту</small>
+                </div>
+            </div>
+
+            <div class="collapse-panel">
+                <div class="collapse-header" onclick="toggleCollapse('photo-panel')">
+                    <span class="collapse-title">📷 Фотография (необязательно)</span>
+                    <span class="collapse-icon" id="photo-icon">▼</span>
+                </div>
+                <div id="photo-panel" class="collapse-content">
+                    <div class="form-group">
+                        <label>Ссылка на фото</label>
+                        <input type="text" name="photo_url" placeholder="https://...">
+                        <small>Можно использовать свои фото или из фотостоков с указанием автора</small>
+                    </div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Источник фото</label>
+                            <input type="text" name="photo_source" placeholder="Фотосток или 'собственноручно'">
+                        </div>
+                        <div class="form-group">
+                            <label>Автор фото</label>
+                            <input type="text" name="photo_author" placeholder="Имя автора">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-panel">
+                <div class="collapse-header" onclick="toggleCollapse('music-panel')">
+                    <span class="collapse-title">🎵 Музыкальный трек (необязательно)</span>
+                    <span class="collapse-icon" id="music-icon">▼</span>
+                </div>
+                <div id="music-panel" class="collapse-content">
+                    <div class="form-group">
+                        <label>Ссылка на MP3</label>
+                        <input type="text" name="track_url" placeholder="https://...">
+                        <small>⚠️ Только произведения авторов, умерших до 1955 года</small>
+                    </div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Название произведения</label>
+                            <input type="text" name="track_title" placeholder="Название">
+                        </div>
+                        <div class="form-group">
+                            <label>Автор</label>
+                            <input type="text" name="track_author" placeholder="Композитор">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Год смерти автора</label>
+                        <input type="number" name="track_author_death_year" placeholder="Должен быть < 1955">
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-panel">
+                <div class="collapse-header" onclick="toggleCollapse('about-panel')">
+                    <span class="collapse-title">👤 О себе (необязательно)</span>
+                    <span class="collapse-icon" id="about-icon">▼</span>
+                </div>
+                <div id="about-panel" class="collapse-content">
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Ваше имя</label>
+                            <input type="text" name="suggester_name" placeholder="Как к вам обращаться?">
+                        </div>
+                        <div class="form-group">
+                            <label>Возрастная категория</label>
+                            <select name="age_group">
+                                <option value="">Не указано</option>
+                                <option value="15-20">15-20 лет</option>
+                                <option value="21-25">21-25 лет</option>
+                                <option value="26-30">26-30 лет</option>
+                                <option value="31-35">31-35 лет</option>
+                                <option value="36+">36+ лет</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-panel">
+                <div class="collapse-header" onclick="toggleCollapse('access-panel')">
+                    <span class="collapse-title">♿ Доступность (необязательно)</span>
+                    <span class="collapse-icon" id="access-icon">▼</span>
+                </div>
+                <div id="access-panel" class="collapse-content">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="wifi_free" id="wifi">
+                        <label for="wifi">📶 Есть бесплатный Wi-Fi</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="wheelchair_accessible" id="wheelchair">
+                        <label for="wheelchair">♿ Доступно для маломобильных людей</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane me-2"></i> Отправить предложение
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=ed1e5987-d728-476b-a522-01190c8d6679&lang=ru_RU"></script>
+<script>
+    let selectMap;
+    let debounceTimer;
+
+    function toggleCollapse(panelId) {
+        const content = document.getElementById(panelId);
+        const icon = document.getElementById(panelId.replace('panel', 'icon'));
+        content.classList.toggle('show');
+        icon.classList.toggle('rotated');
+    }
+
+    async function searchAddressSuggestions(query) {
+        if (!query || query.length < 3) {
+            document.getElementById('addressSuggestions').style.display = 'none';
+            return;
+        }
+
+        try {
+            const apiKey = "ed1e5987-d728-476b-a522-01190c8d6679";
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&results=5`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            const featureMember = data.response.GeoObjectCollection.featureMember;
+            const suggestions = featureMember.map(item => {
+                const geoObject = item.GeoObject;
+                const name = geoObject.name;
+                const address = geoObject.description || geoObject.metaDataProperty.GeocoderMetaData.text;
+                const pos = geoObject.Point.pos;
+                const [lon, lat] = pos.split(' ').map(Number);
+                return { name, address, lat, lon };
+            });
+
+            displaySuggestions(suggestions);
+        } catch (error) {
+            console.error('Ошибка получения подсказок:', error);
+        }
+    }
+
+    function displaySuggestions(suggestions) {
+        const container = document.getElementById('addressSuggestions');
+        if (!suggestions || suggestions.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = '';
+        suggestions.forEach(sugg => {
+            const item = document.createElement('div');
+            item.className = 'suggestion-item';
+            item.innerHTML = `
+                <div class="suggestion-name">${sugg.name}</div>
+                <div class="suggestion-address">${sugg.address}</div>
+            `;
+            item.onclick = () => {
+                selectAddress(sugg);
+            };
+            container.appendChild(item);
+        });
+        container.style.display = 'block';
+    }
+
+    function selectAddress(suggestion) {
+        const addressInput = document.getElementById('address');
+        addressInput.value = suggestion.address;
+        document.getElementById('addressSuggestions').style.display = 'none';
+        
+        document.getElementById('latitude').value = suggestion.lat;
+        document.getElementById('longitude').value = suggestion.lon;
+        document.getElementById('coords-display').innerHTML = `📍 Выбрано: ${suggestion.lat.toFixed(4)}, ${suggestion.lon.toFixed(4)}`;
+        
+        selectMap.setCenter([suggestion.lat, suggestion.lon], 15);
+        
+        if (window.placemark) selectMap.geoObjects.remove(window.placemark);
+        window.placemark = new ymaps.Placemark([suggestion.lat, suggestion.lon], {
+            iconContent: '📍',
+            hintContent: 'Выбранное место'
+        }, {
+            preset: 'islands#circleStretchyIcon',
+            iconColor: '#a78bfa',
+            iconContentSize: [30, 30],
+            iconContentOffset: [-15, -15]
+        });
+        selectMap.geoObjects.add(window.placemark);
+    }
+
+    document.addEventListener('click', function(e) {
+        const wrapper = document.querySelector('.address-input-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            document.getElementById('addressSuggestions').style.display = 'none';
+        }
+    });
+
+    ymaps.ready(function() {
+        selectMap = new ymaps.Map("select-map", {
+            center: [56.0106, 92.8526],
+            zoom: 12,
+            controls: ["zoomControl"]
+        });
+
+        selectMap.setBounds([[55.9, 92.6], [56.1, 93.1]], {checkZoomRange: true});
+
+        selectMap.events.add('click', function(e) {
+            const coords = e.get('coords');
+            const lat = coords[0];
+            const lon = coords[1];
+
+            if (lat < 55.9 || lat > 56.1 || lon < 92.6 || lon > 93.1) {
+                alert('Пожалуйста, выберите место в пределах города Красноярска!');
+                return;
+            }
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
+            document.getElementById('coords-display').innerHTML = `📍 Выбрано: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+            if (window.placemark) selectMap.geoObjects.remove(window.placemark);
+            window.placemark = new ymaps.Placemark(coords, {
+                iconContent: '📍',
+                hintContent: 'Выбранное место'
+            }, {
+                preset: 'islands#circleStretchyIcon',
+                iconColor: '#a78bfa',
+                iconContentSize: [30, 30],
+                iconContentOffset: [-15, -15]
+            });
+            selectMap.geoObjects.add(window.placemark);
+        });
+
+        const addressInput = document.getElementById('address');
+        addressInput.addEventListener('input', function(e) {
+            const query = e.target.value;
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                searchAddressSuggestions(query);
+            }, 300);
+        });
+
+        addressInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const address = this.value;
+                if (address) {
+                    fetch('/api/geocode', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ address: address })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.lat && data.lon) {
+                            if (data.lat < 55.9 || data.lat > 56.1 || data.lon < 92.6 || data.lon > 93.1) {
+                                alert('Адрес находится за пределами Красноярска!');
+                                return;
+                            }
+                            selectMap.setCenter([data.lat, data.lon], 15);
+                            document.getElementById('latitude').value = data.lat;
+                            document.getElementById('longitude').value = data.lon;
+                            document.getElementById('coords-display').innerHTML = `📍 Адрес найден: ${address}`;
+                            
+                            if (window.placemark) selectMap.geoObjects.remove(window.placemark);
+                            window.placemark = new ymaps.Placemark([data.lat, data.lon], {
+                                iconContent: '📍',
+                                hintContent: 'Выбранное место'
+                            }, {
+                                preset: 'islands#circleStretchyIcon',
+                                iconColor: '#a78bfa',
+                                iconContentSize: [30, 30],
+                                iconContentOffset: [-15, -15]
+                            });
+                            selectMap.geoObjects.add(window.placemark);
+                        }
+                    });
+                }
+                document.getElementById('addressSuggestions').style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}
