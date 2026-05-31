@@ -238,9 +238,7 @@
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
-                {% if category == 'error' %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endif %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
             {% endfor %}
         {% endwith %}
 
@@ -270,18 +268,6 @@
             }
         }
         applyTheme();
-
-        // Автоматическое скрытие flash-сообщений через 3 секунды
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 0.5s ease';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    if (alert.parentNode) alert.remove();
-                }, 500);
-            });
-        }, 3000);
     </script>
 </body>
 </html>

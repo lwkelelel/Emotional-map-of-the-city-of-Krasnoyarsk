@@ -26,6 +26,30 @@
         border-color: rgba(102, 126, 234, 0.3);
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06);
     }
+    .wiki-loading{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:15px;
+        padding:40px;
+        color:#6c63ff;
+        font-weight:600;
+    }
+
+    .wiki-spinner{
+        width:40px;
+        height:40px;
+        border:4px solid #ddd;
+        border-top:4px solid #6c63ff;
+        border-radius:50%;
+        animation:spin 1s linear infinite;
+    }
+
+    @keyframes spin{
+        from{transform:rotate(0deg);}
+        to{transform:rotate(360deg);}
+    }
 
     .place-title-anchor {
         font-size: 34px;
@@ -54,20 +78,6 @@
         font-weight: 700;
         text-transform: uppercase;
     }
-
-    .photo-frame {
-        width: 100%;
-        max-height: 350px;
-        overflow: hidden;
-        border-radius: 20px;
-        margin: 16px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-        display: none;
-        background: #090714;
-    }
-
-    .place-photo { width: 100%; height: 100%; max-height: 350px; object-fit: cover; }
 
     .wiki-summary-box {
         background: rgba(255, 255, 255, 0.02);
@@ -201,28 +211,37 @@
 
 {% block content %}
 <div class="place-card">
-    <a href="#" id="wikiTitleLink" target="_blank" class="place-title-anchor">
+    <span id="wikiTitleLink" class="place-title-anchor">
         {{ place.name }}
-    </a>
+    </span>
 
     <div class="category-badge" style="background: {{ place.category.color }}20; color: {{ place.category.color }}; border: 1px solid {{ place.category.color }}45;">
         <span>{{ place.category.icon }} {{ place.category.name }}</span>
         <span id="ratingBadge" class="badge bg-dark ms-3" style="font-size: 11px; border: 1px solid rgba(255,255,255,0.15);">Рейтинг: {{ place.votes_count }}</span>
     </div>
 
-    <div class="photo-frame" id="photoFrameWrapper">
-        <img id="main-place-img" src="{{ place.photo_url or '' }}" class="place-photo" alt="{{ place.name }}">
+    <div id="wikiImageContainer" style="display:none; margin: 16px 0;">
+        <img id="wikiImage"
+             alt="{{ place.name }}"
+             style="width:100%; border-radius:18px; max-height:350px; object-fit:cover; display:block;">
     </div>
 
     <div class="wiki-summary-box" id="wikiSummaryContainer">
-        <div class="shimmer-line"></div>
-        <div class="shimmer-line"></div>
-        <div class="shimmer-line" style="width: 70%;"></div>
+        <div class="wiki-loading">
+            <div class="wiki-spinner"></div>
+            <div>Загружаем описание места...</div>
+        </div>
     </div>
 
     {% if place.address %}
     <p class="address-row">
-        <i class="fas fa-map-marker-alt text-danger me-1"></i> <strong>Адрес:</strong> Красноярск, {{ place.address }}
+        <i class="fas fa-map-marker-alt text-danger me-1"></i>
+        <strong>Адрес:</strong>
+        {% if 'Красноярск' in place.address %}
+            {{ place.address }}
+        {% else %}
+            {{ place.address }}, Красноярск
+        {% endif %}
     </p>
     {% endif %}
 
@@ -306,31 +325,110 @@
 
     async function loadWikipediaSummary() {
         const container = document.getElementById('wikiSummaryContainer');
-        const mainImg = document.getElementById('main-place-img');
-        const frame = document.getElementById('photoFrameWrapper');
         const titleLink = document.getElementById('wikiTitleLink');
-        const placeName = "{{ place.name }}";
+        const imageContainer = document.getElementById('wikiImageContainer');
+        const image = document.getElementById('wikiImage');
+        const defaultDescription = {{ (place.description or "Краткое описание места пока не добавлено.")|tojson }};
+
+        function hideImage() {
+            if (image) {
+                image.removeAttribute('src');
+            }
+            if (imageContainer) {
+                imageContainer.style.display = 'none';
+            }
+        }
+
+        function showLoading() {
+            hideImage();
+
+            container.innerHTML = `
+                <div class="wiki-loading">
+                    <div class="wiki-spinner"></div>
+                    <div>Загружаем описание места...</div>
+                </div>
+            `;
+        }
+
+        function showLocalDescription() {
+            hideImage();
+
+            if (titleLink) {
+                titleLink.removeAttribute('href');
+                titleLink.removeAttribute('target');
+            }
+
+            container.innerHTML = `
+                <div class="wiki-title-tag">
+                    <i class="fas fa-map-marker-alt me-1"></i> Краткое описание места
+                </div>
+                <p class="wiki-extract-text">${defaultDescription}</p>
+            `;
+        }
+
+        function showArticleImage(url) {
+            if (!url || !image || !imageContainer) {
+                hideImage();
+                return;
+            }
+
+            const testImg = new Image();
+
+            testImg.onload = function() {
+                image.src = url;
+                imageContainer.style.display = 'block';
+            };
+
+            testImg.onerror = function() {
+                hideImage();
+            };
+
+            testImg.src = url;
+        }
+
+        showLoading();
 
         try {
-            const response = await fetch(`/api/place_wiki/{{ place.id }}`);
-            const data = await response.json();
+            const response = await fetch(`/api/place_wiki/{{ place.id }}?t=${Date.now()}`, {
+                cache: 'no-store'
+            });
 
-            if (data.success && data.extract) {
-                container.innerHTML = `
-                    <div class="wiki-title-tag"><i class="fab fa-wikipedia-w me-1"></i> Сводка (Wikipedia)</div>
-                    <p class="wiki-extract-text">${data.extract}</p>
-                    <a href="${data.url}" target="_blank" style="display:inline-block; margin-top:10px; color:#a78bfa; font-weight:700; text-decoration:none; font-size:13px;"><i class="fas fa-external-link-alt me-1"></i> Читать полную статью</a>
-                `;
-                if (data.url) titleLink.href = data.url;
-                if((!mainImg.src || mainImg.getAttribute('src') === '') && data.thumbnail) mainImg.src = data.thumbnail;
-                if(mainImg.src && mainImg.getAttribute('src') !== '') frame.style.display = 'block';
-            } else {
-                container.innerHTML = `<p class="wiki-extract-text text-muted">Сводка об объекте формируется.</p>`;
-                titleLink.href = `https://ru.wikipedia.org/w/index.php?search=${encodeURIComponent(placeName)}`;
+            const data = await response.json();
+            console.log("WIKI DATA:", data);
+
+            if (!data.success || !data.extract) {
+                showLocalDescription();
+                return;
             }
-        } catch {
-            container.innerHTML = `<p class="wiki-extract-text text-muted">Сбой Wikipedia API.</p>`;
-            titleLink.href = `https://ru.wikipedia.org/w/index.php?search=${encodeURIComponent(placeName)}`;
+
+            const sourceTitle = data.source === 'Wikipedia' ? 'Сводка (Wikipedia)' : 'Сводка о месте';
+
+            container.innerHTML = `
+                <div class="wiki-title-tag">
+                    <i class="fas fa-align-left me-1"></i> ${sourceTitle}
+                </div>
+                <p class="wiki-extract-text">${data.extract}</p>
+                ${data.url ? `
+                    <a href="${data.url}" target="_blank" style="display:inline-block; margin-top:10px; color:#a78bfa; font-weight:700; text-decoration:none; font-size:13px;">
+                        <i class="fas fa-external-link-alt me-1"></i> Читать полную статью
+                    </a>
+                ` : ''}
+            `;
+
+            if (data.url && titleLink) {
+                const link = document.createElement('a');
+                link.href = data.url;
+                link.target = '_blank';
+                link.className = titleLink.className;
+                link.id = titleLink.id;
+                link.textContent = titleLink.textContent;
+                titleLink.replaceWith(link);
+            }
+
+            showArticleImage(data.thumbnail);
+        } catch (error) {
+            console.error("Ошибка загрузки описания:", error);
+            showLocalDescription();
         }
     }
 
@@ -403,8 +501,11 @@
         }
     }
 
-    window.onload = () => {
+    console.log("place_detail JS работает");
+
+    window.addEventListener("load", () => {
+        console.log("запускаю loadWikipediaSummary");
         loadWikipediaSummary();
-    };
+    });
 </script>
 {% endblock %}
