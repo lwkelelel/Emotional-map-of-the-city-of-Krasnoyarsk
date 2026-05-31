@@ -1,233 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Структура базы данных - Эмоциональная карта Красноярска</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="sql-container">
-    <h1>🗄️ Структура базы данных</h1>
-    <p class="subtitle">SQL-код для создания всех таблиц проекта</p>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
 
-    <button class="copy-btn" onclick="copyAllSQL()">📋 Скопировать весь SQL</button>
+        /* Админ-панель навигация */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
 
-    <!-- Таблица categories -->
-    <div class="sql-section">
-        <h2>📁 Таблица: categories (категории эмоций)</h2>
-        <pre id="sql-categories"><code>CREATE TABLE categories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    icon VARCHAR(50) NOT NULL DEFAULT '📍',
-    color VARCHAR(7) NOT NULL DEFAULT '#FF6B6B',
-    is_active BOOLEAN DEFAULT 1
-);</code></pre>
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(102, 126, 234, 0.15);
+            box-shadow: 5px 0 25px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .admin-logo {
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .sidebar-header h3 {
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .admin-user {
+            font-size: 11px;
+            color: #4f46e5;
+            background: rgba(99, 102, 241, 0.04);
+            padding: 5px 14px;
+            border-radius: 30px;
+            display: inline-block;
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            padding: 24px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .nav-item i { font-size: 15px; opacity: 0.7; transition: transform 0.2s; }
+        .nav-item:hover { color: #0f172a; background: rgba(0,0,0,0.02); padding-left: 20px; }
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        .btn-action-premium {
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-action-premium:hover { background: #e2e8f0; color: #0f172a; }
+
+        .main-content {
+            margin-left: 300px;
+            flex-grow: 1;
+            padding: 40px 45px;
+            overflow-y: auto;
+        }
+
+        /* Карточки таблиц */
+        .schema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        .table-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+        }
+
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.08);
+            border-color: rgba(102, 126, 234, 0.25);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .table-header h2 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .table-header p {
+            color: rgba(255,255,255,0.85);
+            font-size: 12px;
+        }
+
+        .table-content {
+            padding: 20px;
+        }
+
+        .table-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .table-content th {
+            text-align: left;
+            padding: 10px 8px;
+            background: #f8fafc;
+            color: #4f46e5;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-content td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
+        }
+
+        .pk {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+
+        .fk {
+            display: inline-block;
+            background: #f59e0b;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 8px;
+            font-weight: 600;
+        }
+
+        .required {
+            display: inline-block;
+            color: #ef4444;
+            font-size: 10px;
+            margin-right: 8px;
+        }
+
+        .note {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #64748b;
+            border-left: 3px solid #667eea;
+        }
+
+        .relations {
+            margin-top: 40px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+        }
+
+        .relations h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .relation-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .relation-item {
+            background: #f8fafc;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #94a3b8;
+            font-size: 12px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; display: none; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .schema-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <!-- Боковая панель как в админке -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo"><i class="fas fa-fingerprint"></i></div>
+            <h3>Структура данных</h3>
+            <span class="admin-user">
+                <i class="fas fa-database text-info me-1"></i>
+                SQL Schema
+            </span>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/admin" class="nav-item">
+                <i class="fas fa-arrow-left"></i> Вернуться в админ-панель
+            </a>
+            <a href="/" class="nav-item">
+                <i class="fas fa-map"></i> На главную карту
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/admin/logout" class="btn-action-premium w-100 justify-content-center">
+                <i class="fas fa-sign-out-alt me-1"></i> Выйти из сессии
+            </a>
+        </div>
     </div>
 
-    <!-- Таблица places -->
-    <div class="sql-section">
-        <h2>📍 Таблица: places (места на карте)</h2>
-        <pre id="sql-places"><code>CREATE TABLE places (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(200) NOT NULL,
-    category_id INTEGER NOT NULL,
-    description TEXT NOT NULL,
-    latitude FLOAT NOT NULL,
-    longitude FLOAT NOT NULL,
-    address VARCHAR(300),
-    photo_url VARCHAR(500),
-    photo_source VARCHAR(200),
-    photo_author VARCHAR(200),
-    track_url VARCHAR(500),
-    track_author VARCHAR(200),
-    track_author_death_year INTEGER,
-    track_title VARCHAR(200),
-    wifi_free BOOLEAN DEFAULT 0,
-    wheelchair_accessible BOOLEAN DEFAULT 0,
-    age_group VARCHAR(50),
-    is_verified BOOLEAN DEFAULT 0,
-    votes_count INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    views_count INTEGER DEFAULT 0,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
-);</code></pre>
+    <div class="main-content">
+        <div style="margin-bottom: 30px;">
+            <h1 style="font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px;">
+                <i class="fas fa-database me-2"></i> Структура базы данных
+            </h1>
+            <p style="color: #64748b;">Эмоциональная карта города Красноярска — реляционная схема SQL</p>
+        </div>
+
+        <div class="schema-grid">
+
+            <!-- categories -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-folder me-2"></i> categories</h2>
+                    <p>Категории эмоций (справочник)</p>
+                </div>
+                <div class="table-content">
+                    <table>
+                        <tr><th>Атрибут</th><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><span class="pk">PK</span> id</td><td>INTEGER</td><td>Уникальный идентификатор</td></tr>
+                        <tr><td><span class="required">●</span> name</td><td>VARCHAR(100)</td><td>Название категории</td></tr>
+                        <tr><td>icon</td><td>VARCHAR(50)</td><td>Emoji иконка</td></tr>
+                        <tr><td>color</td><td>VARCHAR(7)</td><td>HEX цвет метки</td></tr>
+                        <tr><td>is_active</td><td>BOOLEAN</td><td>Активна ли категория</td></tr>
+                    </table>
+                    <div class="note">📌 15 базовых категорий + возможность добавления новых</div>
+                </div>
+            </div>
+
+            <!-- places -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-map-marker-alt me-2"></i> places</h2>
+                    <p>Основная таблица мест на карте</p>
+                </div>
+                <div class="table-content">
+                    <table>
+                        <tr><th>Атрибут</th><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><span class="pk">PK</span> id</td><td>INTEGER</td><td>Уникальный идентификатор</td></tr>
+                        <tr><td><span class="fk">FK</span> category_id</td><td>INTEGER</td><td>Ссылка на категорию</td></tr>
+                        <tr><td><span class="required">●</span> name</td><td>VARCHAR(200)</td><td>Название места</td></tr>
+                        <tr><td><span class="required">●</span> description</td><td>TEXT</td><td>Описание</td></tr>
+                        <tr><td><span class="required">●</span> latitude</td><td>FLOAT</td><td>Широта</td></tr>
+                        <tr><td><span class="required">●</span> longitude</td><td>FLOAT</td><td>Долгота</td></tr>
+                        <tr><td>address</td><td>VARCHAR(300)</td><td>Адрес</td></tr>
+                        <tr><td>photo_url</td><td>VARCHAR(500)</td><td>Ссылка на фото</td></tr>
+                        <tr><td>track_url</td><td>VARCHAR(500)</td><td>Ссылка на музыку</td></tr>
+                        <tr><td>wifi_free</td><td>BOOLEAN</td><td>Бесплатный Wi-Fi</td></tr>
+                        <tr><td>wheelchair_accessible</td><td>BOOLEAN</td><td>Доступность</td></tr>
+                        <tr><td>is_verified</td><td>BOOLEAN</td><td>Верифицировано</td></tr>
+                        <tr><td>votes_count</td><td>INTEGER</td><td>Количество голосов</td></tr>
+                        <tr><td>views_count</td><td>INTEGER</td><td>Количество просмотров</td></tr>
+                    </table>
+                    <div class="note">📌 Верификация после 5 голосов. Максимум 10 мест в категории</div>
+                </div>
+            </div>
+
+            <!-- suggested_places -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-lightbulb me-2"></i> suggested_places</h2>
+                    <p>Предложенные места (на модерации)</p>
+                </div>
+                <div class="table-content">
+                    <table>
+                        <tr><th>Атрибут</th><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><span class="pk">PK</span> id</td><td>INTEGER</td><td>Уникальный идентификатор</td></tr>
+                        <tr><td><span class="fk">FK</span> category_id</td><td>INTEGER</td><td>Предлагаемая категория</td></tr>
+                        <tr><td><span class="required">●</span> name</td><td>VARCHAR(200)</td><td>Название места</td></tr>
+                        <tr><td><span class="required">●</span> description</td><td>TEXT</td><td>Описание</td></tr>
+                        <tr><td>address</td><td>VARCHAR(300)</td><td>Адрес</td></tr>
+                        <tr><td>latitude</td><td>FLOAT</td><td>Широта</td></tr>
+                        <tr><td>longitude</td><td>FLOAT</td><td>Долгота</td></tr>
+                        <tr><td>suggester_name</td><td>VARCHAR(100)</td><td>Имя предложившего</td></tr>
+                        <tr><td>age_group</td><td>VARCHAR(50)</td><td>Возрастная группа</td></tr>
+                        <tr><td>status</td><td>VARCHAR(20)</td><td>Статус: pending/approved/rejected</td></tr>
+                    </table>
+                    <div class="note">📌 Предложения ожидают модерации администратора</div>
+                </div>
+            </div>
+
+            <!-- admins -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-crown me-2"></i> admins</h2>
+                    <p>Администраторы системы</p>
+                </div>
+                <div class="table-content">
+                    <table>
+                        <tr><th>Атрибут</th><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><span class="pk">PK</span> id</td><td>INTEGER</td><td>Уникальный идентификатор</td></tr>
+                        <tr><td><span class="required">●</span> username</td><td>VARCHAR(80)</td><td>Логин</td></tr>
+                        <tr><td><span class="required">●</span> email</td><td>VARCHAR(120)</td><td>Email</td></tr>
+                        <tr><td><span class="required">●</span> password_hash</td><td>VARCHAR(200)</td><td>Хэш пароля</td></tr>
+                        <tr><td>full_name</td><td>VARCHAR(200)</td><td>Полное имя</td></tr>
+                        <tr><td>is_super_admin</td><td>BOOLEAN</td><td>Супер-администратор</td></tr>
+                        <tr><td>created_at</td><td>DATETIME</td><td>Дата создания</td></tr>
+                        <tr><td>last_login</td><td>DATETIME</td><td>Последний вход</td></tr>
+                    </table>
+                    <div class="note">📌 Первый зарегистрированный администратор становится супер-админом</div>
+                </div>
+            </div>
+
+            <!-- votes -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-thumbs-up me-2"></i> votes</h2>
+                    <p>Голоса пользователей за места</p>
+                </div>
+                <div class="table-content">
+                    <table>
+                        <tr><th>Атрибут</th><th>Тип</th><th>Описание</th></tr>
+                        <tr><td><span class="pk">PK</span> id</td><td>INTEGER</td><td>Уникальный идентификатор</td></tr>
+                        <tr><td><span class="fk">FK</span> place_id</td><td>INTEGER</td><td>Ссылка на место</td></tr>
+                        <tr><td>ip_address</td><td>VARCHAR(45)</td><td>IP пользователя</td></tr>
+                        <tr><td>created_at</td><td>DATETIME</td><td>Дата голосования</td></tr>
+                    </table>
+                    <div class="note">📌 Один IP может проголосовать за место только один раз</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Связи между таблицами -->
+        <div class="relations">
+            <h3><i class="fas fa-project-diagram me-2"></i> Связи между таблицами (IDEF1X)</h3>
+            <div class="relation-list">
+                <div class="relation-item">categories ──◄ places (1:N)</div>
+                <div class="relation-item">categories ──◄ suggested_places (1:N)</div>
+                <div class="relation-item">places ──◄ votes (1:N)</div>
+            </div>
+
+            <div class="note" style="margin-top: 20px; border-left-color: #f59e0b;">
+                <strong>Легенда:</strong><br>
+                <span class="pk">PK</span> — Первичный ключ<br>
+                <span class="fk">FK</span> — Внешний ключ<br>
+                <span class="required">●</span> — Обязательный атрибут (NOT NULL)<br>
+                ◄── — Связь "один ко многим"
+            </div>
+        </div>
+
+        <div class="footer">
+            <i class="fas fa-copyright me-1"></i> 2026 | МАУ "ЦБС им. Горького" | Эмоциональная карта города Красноярска
+        </div>
     </div>
-
-    <!-- Таблица suggested_places -->
-    <div class="sql-section">
-        <h2>💡 Таблица: suggested_places (предложенные места)</h2>
-        <pre id="sql-suggested"><code>CREATE TABLE suggested_places (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(200) NOT NULL,
-    category_id INTEGER NOT NULL,
-    description TEXT NOT NULL,
-    address VARCHAR(300),
-    latitude FLOAT,
-    longitude FLOAT,
-    suggester_name VARCHAR(100),
-    age_group VARCHAR(50),
-    photo_url VARCHAR(500),
-    photo_source VARCHAR(200),
-    photo_author VARCHAR(200),
-    track_url VARCHAR(500),
-    track_author VARCHAR(200),
-    track_author_death_year INTEGER,
-    track_title VARCHAR(200),
-    wifi_free BOOLEAN DEFAULT 0,
-    wheelchair_accessible BOOLEAN DEFAULT 0,
-    status VARCHAR(20) DEFAULT 'pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
-);</code></pre>
-    </div>
-
-    <!-- Таблица admins -->
-    <div class="sql-section">
-        <h2>👑 Таблица: admins (администраторы)</h2>
-        <pre id="sql-admins"><code>CREATE TABLE admins (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(80) NOT NULL UNIQUE,
-    email VARCHAR(120) NOT NULL UNIQUE,
-    password_hash VARCHAR(200) NOT NULL,
-    full_name VARCHAR(200),
-    is_super_admin BOOLEAN DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    last_login DATETIME
-);</code></pre>
-    </div>
-
-    <!-- Таблица votes -->
-    <div class="sql-section">
-        <h2>👍 Таблица: votes (голоса пользователей)</h2>
-        <pre id="sql-votes"><code>CREATE TABLE votes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    place_id INTEGER NOT NULL,
-    ip_address VARCHAR(45) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
-    UNIQUE(place_id, ip_address)
-);</code></pre>
-    </div>
-
-    <!-- Индексы -->
-    <div class="sql-section">
-        <h2>🔍 Индексы для производительности</h2>
-        <pre id="sql-indexes"><code>-- Индексы для таблицы places
-CREATE INDEX idx_places_category_id ON places(category_id);
-CREATE INDEX idx_places_coordinates ON places(latitude, longitude);
-CREATE INDEX idx_places_verified ON places(is_verified);
-CREATE INDEX idx_places_votes ON places(votes_count DESC);
-
--- Индексы для таблицы suggested_places
-CREATE INDEX idx_suggested_category ON suggested_places(category_id);
-CREATE INDEX idx_suggested_status ON suggested_places(status);
-CREATE INDEX idx_suggested_age ON suggested_places(age_group);
-
--- Индексы для таблицы votes
-CREATE INDEX idx_votes_place ON votes(place_id);
-CREATE INDEX idx_votes_ip ON votes(ip_address);</code></pre>
-    </div>
-
-    <a href="/" class="btn back-btn">← Вернуться на карту</a>
 </div>
-{% endblock %}
-{% block extra_js %}
-<script>
-    function copyAllSQL() {
-        const sqlBlocks = [
-            document.getElementById('sql-categories').innerText,
-            document.getElementById('sql-places').innerText,
-            document.getElementById('sql-suggested').innerText,
-            document.getElementById('sql-admins').innerText,
-            document.getElementById('sql-votes').innerText,
-            document.getElementById('sql-indexes').innerText
-        ];
-        const fullSQL = sqlBlocks.join('\n\n');
 
-        navigator.clipboard.writeText(fullSQL).then(() => {
-            alert('✅ SQL-код скопирован в буфер обмена');
-        }).catch(() => {
-            alert('❌ Не удалось скопировать');
-        });
-    }
-</script>
-
-{% extends "base.html" %}
-
-{% block title %}Структура базы данных{% endblock %}
-
-{% block extra_css %}
-<style>
-    .sql-container {
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 24px;
-        padding: 32px;
-        border: 1px solid rgba(102, 126, 234, 0.3);
-    }
-    body.light-theme .sql-container {
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid #e2e8f0;
-    }
-    h1 {
-        color: white;
-        font-size: 28px;
-        margin-bottom: 8px;
-    }
-    body.light-theme h1 { color: #1e293b; }
-    .subtitle {
-        color: #94a3b8;
-        margin-bottom: 30px;
-        font-size: 14px;
-    }
-    .sql-section {
-        margin-bottom: 30px;
-        background: #1e1e2e;
-        border-radius: 16px;
-        padding: 20px;
-    }
-    body.light-theme .sql-section {
-        background: #f1f5f9;
-    }
-    .sql-section h2 {
-        color: #a78bfa;
-        font-size: 18px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    body.light-theme .sql-section h2 {
-        color: #667eea;
-    }
-    pre {
-        background: #0d0d1a;
-        padding: 15px;
-        border-radius: 12px;
-        overflow-x: auto;
-        font-family: 'Fira Code', 'Courier New', monospace;
-        font-size: 13px;
-        color: #e2e8f0;
-        margin: 0;
-    }
-    body.light-theme pre {
-        background: #e2e8f0;
-        color: #1e293b;
-    }
-    code {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-    .back-btn {
-        display: inline-block;
-        margin-top: 20px;
-    }
-    .copy-btn {
-        background: #667eea;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-bottom: 20px;
-        font-size: 13px;
-    }
-    .copy-btn:hover { background: #5a67d8; }
-</style>
-
-{% endblock %}
+</body>
+</html>

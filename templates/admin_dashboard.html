@@ -294,6 +294,97 @@
         .active-section { display: block; animation: tabFadeIn 0.3s ease; }
         @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Стили для модального окна */
+        .modal-custom {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-custom-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .modal-custom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .modal-custom-header h3 {
+            color: #1a202c;
+            margin: 0;
+        }
+        .close-modal {
+            cursor: pointer;
+            font-size: 28px;
+            color: #94a3b8;
+            line-height: 1;
+        }
+        .close-modal:hover {
+            color: #ef4444;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .btn-modal {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+        }
+        .btn-modal-danger {
+            background: #ef4444;
+            color: white;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .sidebar { width: 0; display: none; }
@@ -339,7 +430,9 @@
                     <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ places_with_complaints|length }}</span>
                     {% endif %}
                 </div>
-                <a href="/admin/admins" class="nav-item"><i class="fas fa-user-shield"></i> Рабочая группа</a>
+                <div class="nav-item" data-tab="admins">
+                    <i class="fas fa-user-shield"></i> Рабочая группа
+                </div>
             </div>
 
             <div class="sidebar-footer">
@@ -607,65 +700,23 @@
                 </div>
             </div>
 
+            <!-- Вкладка: Рабочая группа (полный функционал из admin_admins_list.html) -->
             <div id="tab-admins" class="section">
                 <div class="data-card">
                     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                         <h3 class="mb-0"><i class="fas fa-users text-primary me-2"></i> Управление доступом рабочей группы</h3>
                         {% if session.is_super_admin %}
-                        <a href="/admin/admin/create" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #764ba2 0%, #6366f1 100%);">
+                        <button class="btn-action-premium btn-premium-success" onclick="openAddAdminModal()" style="background: linear-gradient(135deg, #764ba2 0%, #6366f1 100%);">
                             <i class="fas fa-user-plus me-1"></i> Добавить сотрудника
-                        </a>
+                        </button>
                         {% endif %}
                     </div>
 
-                    <h5 class="text-warning mb-3 fw-bold" style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-clock me-1"></i> Новые заявки на регистрацию</h5>
-                    <div class="table-responsive-container mb-5">
+                    <div class="table-responsive-container">
                         <table class="table mb-0">
                             <thead>
                                 <tr>
-                                    <th>Логин</th>
-                                    <th>Email</th>
-                                    <th>ФИО Сотрудника</th>
-                                    <th>Статус доступа</th>
-                                    <th>Действия супер-админа</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% set pending_count = namespace(value=0) %}
-                                {% for a in admins %}
-                                    {% if not a.is_approved %}
-                                    {% set pending_count.value = pending_count.value + 1 %}
-                                    <tr>
-                                        <td><strong>{{ a.username }}</strong></td>
-                                        <td>{{ a.email }}</td>
-                                        <td>{{ a.full_name or 'Новый кандидат' }}</td>
-                                        <td><span class="badge bg-danger">Ожидает одобрения</span></td>
-                                        <td>
-                                            {% if session.is_super_admin %}
-                                                <a href="/admin/admins/approve/{{ a.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-check"></i> Одобрить доступ</a>
-                                                <a href="/admin/admins/delete/{{ a.id }}" class="btn-action-premium btn-premium-secondary" onclick="return confirm('Отклонить заявку и удалить?')">Отклонить</a>
-                                            {% else %}
-                                                <span class="text-muted small"><i class="fas fa-lock"></i> Нужен Супер-админ</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if pending_count.value == 0 %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted small">Новых заявок на модерацию не поступало.</td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h5 class="text-success mb-3 fw-bold" style="font-size:13px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-user-check me-1"></i> Действующий состав</h5>
-                    <div class="table-responsive-container mb-4">
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
+                                    <th>ID</th>
                                     <th>Логин</th>
                                     <th>Email</th>
                                     <th>Имя</th>
@@ -675,33 +726,28 @@
                             </thead>
                             <tbody>
                                 {% for a in admins %}
-                                    {% if a.is_approved %}
-                                    <tr>
-                                        <td><strong>{{ a.username }}</strong></td>
-                                        <td>{{ a.email }}</td>
-                                        <td>{{ a.full_name or 'Сотрудник ЦБС' }}</td>
-                                        <td>
-                                            {% if a.is_super_admin %}
-                                                <span class="badge text-dark px-2 py-1.5" style="font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);"><i class="fas fa-crown me-1"></i> ⭐ Супер-админ</span>
-                                            {% else %}
-                                                <span class="badge px-2 py-1.5" style="background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);"><i class="fas fa-user-edit me-1"></i> ✅ Админ</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if session.admin_id != a.id %}
-                                                {% if session.is_super_admin %}
-                                                <a href="/admin/admins/delete/{{ a.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Отозвать права и удалить аккаунт?')">
-                                                    <i class="fas fa-trash-alt me-1"></i> 🗑️ Удалить
-                                                </a>
-                                                {% else %}
-                                                <span class="text-muted small"><i class="fas fa-lock"></i> Заблокировано</span>
-                                                {% endif %}
-                                            {% else %}
-                                                <span class="system-status-badge">Текущий</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endif %}
+                                <tr>
+                                    <td>{{ a.id }}</td>
+                                    <td><strong>{{ a.username }}</strong></td>
+                                    <td>{{ a.email }}</td>
+                                    <td>{{ a.full_name or '—' }}</td>
+                                    <td>
+                                        {% if a.is_super_admin %}
+                                            <span class="badge text-dark px-2 py-1.5" style="font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);"><i class="fas fa-crown me-1"></i> ⭐ Супер-админ</span>
+                                        {% else %}
+                                            <span class="badge px-2 py-1.5" style="background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);"><i class="fas fa-user-edit me-1"></i> Админ</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if session.admin_id != a.id and session.is_super_admin %}
+                                            <a href="/admin/admin/delete/{{ a.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить администратора {{ a.username }}?')" style="padding: 6px 14px;">
+                                                <i class="fas fa-trash-alt me-1"></i> Удалить
+                                            </a>
+                                        {% elif session.admin_id == a.id %}
+                                            <span class="system-status-badge">Текущий</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -726,8 +772,47 @@
         </div>
     </div>
 
+    <!-- Модальное окно для добавления администратора -->
+    <div id="addAdminModal" class="modal-custom">
+        <div class="modal-custom-content">
+            <div class="modal-custom-header">
+                <h3>➕ Добавить администратора</h3>
+                <span class="close-modal" onclick="closeAddAdminModal()">&times;</span>
+            </div>
+            <form action="/admin/admin/create" method="POST">
+                <div class="form-group">
+                    <label>Логин *</label>
+                    <input type="text" name="username" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required placeholder="example@mail.ru">
+                </div>
+                <div class="form-group">
+                    <label>Пароль *</label>
+                    <input type="password" name="password" required placeholder="Минимум 6 символов">
+                </div>
+                <div class="form-group">
+                    <label>Полное имя</label>
+                    <input type="text" name="full_name" placeholder="Иван Иванов">
+                </div>
+                {% if session.is_super_admin %}
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" name="is_super_admin" id="is_super_admin">
+                    <label for="is_super_admin">⭐ Супер-администратор</label>
+                </div>
+                {% endif %}
+                <div class="form-actions">
+                    <button type="submit" class="btn-modal btn-modal-primary">➕ Создать</button>
+                    <button type="button" class="btn-modal btn-modal-danger" onclick="closeAddAdminModal()">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Переключение вкладок
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
                 const tabId = this.dataset.tab;
@@ -739,6 +824,33 @@
                 if (activeSection) activeSection.classList.add('active-section');
             });
         });
+
+        // Функции для модального окна
+        function openAddAdminModal() {
+            document.getElementById('addAdminModal').style.display = 'flex';
+        }
+
+        function closeAddAdminModal() {
+            document.getElementById('addAdminModal').style.display = 'none';
+        }
+
+        // Закрытие при клике вне окна
+        window.onclick = function(event) {
+            const modal = document.getElementById('addAdminModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Автоскрытие flash-сообщений
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    if (alert) alert.style.display = 'none';
+                }, 4000);
+            });
+        }, 100);
     </script>
 </body>
 </html>

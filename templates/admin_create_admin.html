@@ -8,92 +8,322 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 20px;
+            background: #f0f2f5;
             min-height: 100vh;
         }
-        .form-card {
-            max-width: 500px;
-            margin: 0 auto;
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Левая панель */
+        .sidebar {
+            width: 280px;
+            background: #1a1a2e;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a4a;
+        }
+
+        .sidebar-header h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #2a2a4a;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-left-color: white;
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 32px;
+        }
+
+        .nav-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        /* Верхняя панель */
+        .top-bar {
             background: white;
-            padding: 32px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            animation: fadeInUp 0.5s ease;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .top-bar h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        h1 { margin-bottom: 24px; color: #1a202c; font-size: 24px; }
-        label { display: block; margin-bottom: 8px; font-weight: 500; color: #2d3748; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Карточка формы */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-card h2 {
+            color: #1a202c;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
         input {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
             border: 1px solid #e2e8f0;
             border-radius: 10px;
-            transition: all 0.3s ease;
+            font-size: 14px;
+            transition: all 0.2s;
         }
+
         input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
+
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-        .checkbox-group input { width: auto; margin: 0; }
-        button {
-            width: 100%;
-            padding: 12px;
+
+        .checkbox-group input {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            width: 100%;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-        .back { display: inline-block; margin-top: 20px; color: #667eea; text-decoration: none; }
-        .alert { padding: 12px; border-radius: 10px; margin-bottom: 20px; }
-        .alert-error { background: #fed7d7; color: #c53030; }
-        .alert-success { background: #c6f6d5; color: #276749; }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+
+        .btn-back {
+            background: #e2e8f0;
+            color: #4a5568;
+            margin-top: 16px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-back:hover {
+            background: #cbd5e0;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .nav-text {
+                display: none;
+            }
+            .sidebar .nav-icon {
+                font-size: 24px;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="form-card">
-        <h1>➕ Создать администратора</h1>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endwith %}
-        <form method="POST">
-            <label>Логин *</label>
-            <input type="text" name="username" required>
+    <div class="admin-container">
+        <!-- Левая панель (как в дашборде) -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>⭐ Админ-панель</h2>
+                <p>Управление картой</p>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item" data-tab="dashboard" onclick="location.href='/admin'">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Главная</span>
+                </div>
+                <div class="nav-item" data-tab="places" onclick="location.href='/admin'">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">Места</span>
+                </div>
+                <div class="nav-item" data-tab="suggestions" onclick="location.href='/admin'">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-text">Предложения</span>
+                </div>
+                <div class="nav-item" data-tab="stats" onclick="location.href='/admin'">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Статистика</span>
+                </div>
+                <div class="nav-item active" data-tab="admins" onclick="location.href='/admin/admins'">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Администраторы</span>
+                </div>
+                <div class="nav-item" data-tab="export" onclick="location.href='/admin'">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-text">Экспорт</span>
+                </div>
+            </div>
+        </div>
 
-            <label>Email *</label>
-            <input type="email" name="email" required>
-
-            <label>Полное имя</label>
-            <input type="text" name="full_name">
-
-            <label>Пароль * (мин. 6 символов)</label>
-            <input type="password" name="password" required>
-
-            <div class="checkbox-group">
-                <input type="checkbox" name="is_super_admin" id="super">
-                <label for="super">⭐ Супер-администратор (полный доступ)</label>
+        <!-- Основной контент -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>➕ Создать администратора</h1>
+                <div class="user-info">
+                    <span>👤 {{ session.admin_username }}</span>
+                    <a href="/admin/logout">Выйти</a>
+                    <a href="/">На сайт</a>
+                </div>
             </div>
 
-            <button type="submit">Создать</button>
-        </form>
-        <a href="/admin/admins" class="back">← Назад</a>
+            <div class="form-card">
+                <h2>📝 Информация о новом администраторе</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endwith %}
+                <form method="POST">
+                    <label>Логин *</label>
+                    <input type="text" name="username" required placeholder="Введите логин">
+
+                    <label>Email *</label>
+                    <input type="email" name="email" required placeholder="example@mail.ru">
+
+                    <label>Полное имя</label>
+                    <input type="text" name="full_name" placeholder="Иван Иванов">
+
+                    <label>Пароль * (мин. 6 символов)</label>
+                    <input type="password" name="password" required>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="is_super_admin" id="super">
+                        <label for="super">⭐ Супер-администратор (полный доступ)</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Создать администратора</button>
+                </form>
+                <a href="/admin/admins" class="btn btn-back" style="width: 100%;">← Назад к списку администраторов</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

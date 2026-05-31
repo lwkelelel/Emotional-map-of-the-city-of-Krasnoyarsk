@@ -230,7 +230,13 @@
                 }
                 indicators.appendChild(indicator);
 
-                const bgStyle = p.photo_url ? `background-image: url(${p.photo_url}); background-size: cover; background-position: center;` : `background: linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(139, 92, 246, 0.3));`;
+                // Исправление: формируем корректную строку стилей для background
+                let bgStyle = '';
+                if (p.photo_url) {
+                    bgStyle = `background-image: url(${p.photo_url}); background-size: cover; background-position: center;`;
+                } else {
+                    bgStyle = `background: linear-gradient(135deg, rgba(167, 139, 250, 0.6), rgba(139, 92, 246, 0.3)); background-size: cover; background-position: center;`;
+                }
 
                 const item = document.createElement('div');
                 item.className = `carousel-item ${isActive}`;
