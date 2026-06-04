@@ -29,7 +29,6 @@
             z-index: 5;
         }
 
-        /* Сайдбар */
         .sidebar {
             width: 300px;
             background: rgba(255, 255, 255, 0.95);
@@ -119,7 +118,6 @@
 
         .sidebar-footer { padding: 20px; border-top: 1px solid rgba(0,0,0,0.05); }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
         .main-content {
             margin-left: 300px;
             flex-grow: 1;
@@ -174,7 +172,6 @@
 
         .table-responsive-container { border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 20px; }
 
-        /* ТАБЛИЦЫ */
         table { width: 100%; border-collapse: separate; border-spacing: 0; background: #ffffff; table-layout: fixed; }
 
         th {
@@ -208,7 +205,6 @@
             cursor: pointer;
         }
 
-        /* СПЕЦИАЛЬНЫЙ РАЗМЕР КНОПОК ТОЛЬКО ДЛЯ РАЗДЕЛА "Локации, опубликованные на карте" */
         .verified-table-actions .btn-action-premium {
             padding: 4px 12px !important;
             font-size: 11px !important;
@@ -224,7 +220,6 @@
         .btn-premium-secondary { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1 !important; }
         .btn-premium-secondary:hover { background: #e2e8f0; color: #0f172a; }
 
-        /* Компактный размер кнопок модерации для раздела задизлайканных мест */
         .btn-disliked-edit {
             padding: 5px 12px !important;
             font-size: 12px !important;
@@ -255,7 +250,6 @@
             box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
         }
 
-        /* Статус бэйджа «Текущий» */
         .system-status-badge {
             font-size: 11px;
             font-weight: 700;
@@ -269,7 +263,6 @@
             display: inline-block;
         }
 
-        /* Коробка схемы данных */
         .audit-premium-box {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid rgba(102, 126, 234, 0.25);
@@ -294,7 +287,6 @@
         .active-section { display: block; animation: tabFadeIn 0.3s ease; }
         @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Стили для модального окна */
         .modal-custom {
             display: none;
             position: fixed;
@@ -385,7 +377,134 @@
             color: white;
         }
 
-        /* Адаптивность */
+        .token-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .token-value {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #4f46e5;
+            word-break: break-all;
+        }
+        .copy-btn {
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 5px 10px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #cbd5e1;
+        }
+        .badge-active {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .badge-expired {
+            background: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .badge-used {
+            background: #94a3b8;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            width: 100px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-bar input {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            width: 250px;
+            font-size: 13px;
+        }
+        .filter-bar select {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            background: white;
+        }
+        .delete-all-btn {
+            background: #dc2626;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-all-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .selected-count {
+            font-size: 13px;
+            color: #6366f1;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-select-all {
+            background: #6366f1;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-select-all:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
             .sidebar { width: 0; display: none; }
             .main-content { margin-left: 0; padding: 20px; }
@@ -394,463 +513,837 @@
 </head>
 <body>
 
-    <div class="admin-container">
+<div class="admin-container">
 
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="admin-logo"><i class="fas fa-fingerprint"></i></div>
-                <h3>Панель управления</h3>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo"><i class="fas fa-fingerprint"></i></div>
+            <h3>Панель управления</h3>
                 <span class="admin-user">
                     <i class="fas fa-shield-alt text-warning me-1"></i>
                     {{ session.get('admin_username', 'Модератор') }}
                 </span>
-            </div>
+        </div>
 
-            <div class="nav-menu">
-                <div class="nav-item active" data-tab="stats">
-                    <i class="fas fa-chart-bar"></i> Обзор системы
-                </div>
-                <div class="nav-item" data-tab="pending">
-                    <i class="fas fa-hourglass-half"></i> На модерации
-                    <span class="badge bg-danger ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_pending }}</span>
-                </div>
-                <div class="nav-item" data-tab="disliked">
-                    <i class="fas fa-thumbs-down"></i> Задизлайканные
-                    {% if disliked_places %}
-                    <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ disliked_places|length }}</span>
-                    {% endif %}
-                </div>
-                <div class="nav-item" data-tab="verified">
-                    <i class="fas fa-check-circle"></i> Одобренные точки
-                    <span class="badge bg-success ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_places }}</span>
-                </div>
-                <div class="nav-item" data-tab="complaints">
-                    <i class="fas fa-exclamation-triangle"></i> Жалобы на эмоции
-                    {% if places_with_complaints %}
-                    <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ places_with_complaints|length }}</span>
-                    {% endif %}
-                </div>
-                <div class="nav-item" data-tab="admins">
-                    <i class="fas fa-user-shield"></i> Рабочая группа
-                </div>
+        <div class="nav-menu">
+            <div class="nav-item" data-tab="stats">
+                <i class="fas fa-chart-bar"></i> Обзор системы
             </div>
-
-            <div class="sidebar-footer">
-                <a href="/" class="btn-action-premium btn-premium-secondary w-100 mb-2 justify-content-center">
-                    <i class="fas fa-map me-1"></i> Вернуться к карте
-                </a>
-                <a href="/admin/logout" class="btn-action-premium btn-premium-danger w-100 justify-content-center">
-                    <i class="fas fa-sign-out-alt me-1"></i> Выйти из сессии
-                </a>
+            <div class="nav-item" data-tab="pending">
+                <i class="fas fa-hourglass-half"></i> На модерации
+                <span class="badge bg-danger ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_pending }}</span>
+            </div>
+            <div class="nav-item" data-tab="disliked">
+                <i class="fas fa-thumbs-down"></i> Задизлайканные
+                {% if disliked_places %}
+                <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ disliked_places|length }}</span>
+                {% endif %}
+            </div>
+            <div class="nav-item" data-tab="verified">
+                <i class="fas fa-check-circle"></i> Одобренные точки
+                <span class="badge bg-success ms-auto" style="border-radius: 6px; font-size: 11px;">{{ total_places }}</span>
+            </div>
+            <div class="nav-item" data-tab="complaints">
+                <i class="fas fa-exclamation-triangle"></i> Жалобы на эмоции
+                {% if places_with_complaints %}
+                <span class="badge bg-warning text-dark ms-auto" style="border-radius: 6px; font-size: 11px; font-weight:700;">{{ places_with_complaints|length }}</span>
+                {% endif %}
+            </div>
+            <div class="nav-item" data-tab="admins">
+                <i class="fas fa-user-shield"></i> Рабочая группа
+            </div>
+            <div class="nav-item" data-tab="tokens">
+                <i class="fas fa-key"></i> Токены регистрации
             </div>
         </div>
 
-        <div class="main-content">
+        <div class="sidebar-footer">
+            <a href="/" class="btn-action-premium btn-premium-secondary w-100 mb-2 justify-content-center">
+                <i class="fas fa-map me-1"></i> Вернуться к карте
+            </a>
+            <a href="/admin/logout" class="btn-action-premium btn-premium-danger w-100 justify-content-center">
+                <i class="fas fa-sign-out-alt me-1"></i> Выйти из сессии
+            </a>
+        </div>
+    </div>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="mb-4">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{% if category == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
-                                <span>{{ message }}</span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+    <div class="main-content">
 
-            <div id="tab-stats" class="section active-section">
-                <div class="welcome-box d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div>
-                        <h2>Приветствуем, {{ session.get('admin_username') }}!</h2>
-                        <p class="mb-0">
-                            Сводные показатели культурно-атмосферного наполнения интерактивной карты города Красноярска.
-                        </p>
-                    </div>
-                    <div>
-                        <a href="/export/kml" class="btn-action-premium btn-premium-success" style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16,185,129,0.25); font-size:14px;">
-                            <i class="fas fa-download me-2"></i> Экспорт карты в KML
-                        </a>
-                    </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{% if category == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                            <span>{{ message }}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
                 </div>
+            {% endif %}
+        {% endwith %}
 
-                <div class="row g-4 mb-4">
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-icon bg-success-blur"><i class="fas fa-map-marked-alt"></i></div>
-                            <div>
-                                <div class="stat-num">{{ total_places }}</div>
-                                <div class="stat-label">Опубликовано мест</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-icon bg-danger-blur"><i class="fas fa-clock"></i></div>
-                            <div>
-                                <div class="stat-num">{{ total_pending }}</div>
-                                <div class="stat-label">В очереди проверки</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-icon bg-info-blur"><i class="fas fa-users"></i></div>
-                            <div>
-                                <div class="stat-num">{{ admins|length if admins else 1 }}</div>
-                                <div class="stat-label">Модераторов сети</div>
-                            </div>
+        <div id="tab-stats" class="section">
+            <div class="welcome-box d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2>Приветствуем, {{ session.get('admin_username') }}!</h2>
+                    <p class="mb-0">
+                        Сводные показатели культурно-атмосферного наполнения интерактивной карты города Красноярска.
+                    </p>
+                </div>
+                <div>
+                    <a href="/export/kml" class="btn-action-premium btn-premium-success" style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16,185,129,0.25); font-size:14px;">
+                        <i class="fas fa-download me-2"></i> Экспорт карты в KML
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success-blur"><i class="fas fa-map-marked-alt"></i></div>
+                        <div>
+                            <div class="stat-num">{{ total_places }}</div>
+                            <div class="stat-label">Опубликовано мест</div>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-danger-blur"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <div class="stat-num">{{ total_pending }}</div>
+                            <div class="stat-label">В очереди проверки</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info-blur"><i class="fas fa-users"></i></div>
+                        <div>
+                            <div class="stat-num">{{ admins|length if admins else 1 }}</div>
+                            <div class="stat-label">Модераторов сети</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="row g-4">
-                    <div class="col-lg-7">
-                        <div class="data-card">
-                            <h3><i class="fas fa-chart-line text-primary me-2"></i> Плотность emotional слоёв</h3>
-                            <div class="row g-3">
-                                {% for cat in categories_stats %}
-                                <div class="col-md-6">
-                                    <div style="background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span style="font-size:13px; font-weight:600;">{{ cat.icon }} {{ cat.name }}</span>
-                                            <span style="font-size:12px; font-weight:700; opacity:0.8;">{{ cat.count }}</span>
-                                        </div>
-                                        <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar" style="width: {% if (cat.count/cat.max*100) > 100 %}100{% else %}{{ cat.count/cat.max*100 }}{% endif %}%; background-color: {{ cat.color }};"></div>
-                                        </div>
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="data-card">
+                        <h3><i class="fas fa-chart-line text-primary me-2"></i> Плотность emotional слоёв</h3>
+                        <div class="row g-3">
+                            {% for cat in categories_stats %}
+                            <div class="col-md-6">
+                                <div style="background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span style="font-size:13px; font-weight:600;">{{ cat.icon }} {{ cat.name }}</span>
+                                        <span style="font-size:12px; font-weight:700; opacity:0.8;">{{ cat.count }}</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: {% if (cat.count/cat.max*100) > 100 %}100{% else %}{{ cat.count/cat.max*100 }}{% endif %}%; background-color: {{ cat.color }};"></div>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-5">
-                        <div class="data-card">
-                            <h3><i class="fas fa-chart-pie text-warning me-2"></i> Активность по возрастам</h3>
-                            <div class="d-flex flex-column gap-2 mt-2">
-                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                                    <span><i class="fas fa-user text-info me-2"></i> 15-20 лет</span>
-                                    <strong>{{ age_stats['15-20']|default(0) }} точек</strong>
-                                </div>
-                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                                    <span><i class="fas fa-user text-success me-2"></i> 21-30 лет</span>
-                                    <strong>{{ age_stats['21-30']|default(0) }} точек</strong>
-                                </div>
-                                <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                                    <span><i class="fas fa-user text-warning me-2"></i> 31-50 лет</span>
-                                    <strong>{{ age_stats['31-50']|default(0) }} точек</strong>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="tab-pending" class="section">
-                <div class="data-card">
-                    <h3><i class="fas fa-hourglass-half text-danger me-2"></i> Новые предложения от жителей</h3>
-                    <div class="table-responsive-container">
-                        {% if pending_places %}
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Название</th>
-                                    <th>Категория</th>
-                                    <th>Адрес</th>
-                                    <th>Голоса</th>
-                                    <th>Рассмотрение</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in pending_places %}
-                                <tr>
-                                    <td><strong>{{ p.name }}</strong></td>
-                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
-                                    <td>{{ p.address or 'Координаты зафиксированы' }}</td>
-                                    <td><span class="badge bg-secondary">{{ p.votes_count }}</span></td>
-                                    <td>
-                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-eye"></i> Открыть</a>
-                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-secondary" onclick="return confirm('Удалить предложение?')">🗑️ Отклонить</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="p-5 text-center text-muted fw-bold">☕ Очередь пуста. Все предложенные локации успешно верифицированы!</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-disliked" class="section">
-                <div class="data-card">
-                    <h3><i class="fas fa-thumbs-down text-danger me-2"></i> Места с отрицательным рейтингом (Критика жителей)</h3>
-                    <div class="table-responsive-container">
-                        {% if disliked_places %}
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width: 30%;">Название локации</th>
-                                    <th style="width: 20%;">Категория</th>
-                                    <th style="width: 25%;">Адрес</th>
-                                    <th style="width: 10%;">Рейтинг</th>
-                                    <th style="width: 15%;">Модерация</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in disliked_places %}
-                                <tr>
-                                    <td><strong>{{ p.name }}</strong></td>
-                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
-                                    <td>{{ p.address or 'Красноярск' }}</td>
-                                    <td><span class="badge bg-danger px-2 py-1">{{ p.votes_count }}</span></td>
-                                    <td>
-                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-disliked-edit me-1"><i class="fas fa-pen-nib me-1"></i> Исправить</a>
-                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-disliked-delete" onclick="return confirm('Полностью удалить задизлайканное место с карты?')"><i class="fas fa-trash-alt"></i></a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="p-5 text-center text-muted fw-bold">☀️ На карте нет мест с отрицательным рейтингом. Жители довольны всеми локациями!</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-verified" class="section">
-                <div class="data-card">
-                    <h3><i class="fas fa-check-circle text-success me-2"></i> Локации, опубликованные на карте</h3>
-                    <div class="table-responsive-container">
-                        {% if verified_places %}
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Название</th>
-                                    <th>Атмосфера</th>
-                                    <th>Адрес публикации</th>
-                                    <th>Рейтинг</th>
-                                    <th>Управление</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in verified_places %}
-                                <tr>
-                                    <td>#{{ p.id }}</td>
-                                    <td><strong>{{ p.name }}</strong></td>
-                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
-                                    <td>{{ p.address or 'Красноярск' }}</td>
-                                    <td><span class="badge bg-primary">{{ p.votes_count }}</span></td>
-                                    <td class="verified-table-actions">
-                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1"><i class="fas fa-sliders-h"></i> Редактировать</a>
-                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить точку с карты безвозвратно?')">🗑️ Удалить</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="p-5 text-center text-muted fw-bold">🗺️ Одобренных точек пока нет.</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-complaints" class="section">
-                <div class="data-card">
-                    <h3><i class="fas fa-exclamation-triangle text-warning me-2"></i> Жалобы на несоответствие категории</h3>
-                    <div class="table-responsive-container">
-                        {% if places_with_complaints %}
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Локация</th>
-                                    <th>Атмосфера</th>
-                                    <th>Жалобы</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in places_with_complaints %}
-                                <tr>
-                                    <td><strong>{{ p.name }}</strong></td>
-                                    <td>{{ p.category.icon }} {{ p.category.name }}</td>
-                                    <td><span class="badge bg-danger">🚨 Репортов: {{ p.complaints_count }}</span></td>
-                                    <td>
-                                        <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-sync-alt"></i> Сменить эмоцию</a>
-                                        {% if session.is_super_admin %}
-                                        <a href="/admin/complaints/clear/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1" onclick="return confirm('Сбросить счётчик жалоб?')"><i class="fas fa-broom"></i> Сбросить</a>
-                                        {% endif %}
-                                        <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Полностью удалить точку с карты?')">🗑️ Удалить</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="p-5 text-center text-muted fw-bold">☀️ Жалоб нет. Все локации соответствуют выбранным эмоциям!</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Вкладка: Рабочая группа (полный функционал из admin_admins_list.html) -->
-            <div id="tab-admins" class="section">
-                <div class="data-card">
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                        <h3 class="mb-0"><i class="fas fa-users text-primary me-2"></i> Управление доступом рабочей группы</h3>
-                        {% if session.is_super_admin %}
-                        <button class="btn-action-premium btn-premium-success" onclick="openAddAdminModal()" style="background: linear-gradient(135deg, #764ba2 0%, #6366f1 100%);">
-                            <i class="fas fa-user-plus me-1"></i> Добавить сотрудника
-                        </button>
-                        {% endif %}
-                    </div>
-
-                    <div class="table-responsive-container">
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Логин</th>
-                                    <th>Email</th>
-                                    <th>Имя</th>
-                                    <th>Статус</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for a in admins %}
-                                <tr>
-                                    <td>{{ a.id }}</td>
-                                    <td><strong>{{ a.username }}</strong></td>
-                                    <td>{{ a.email }}</td>
-                                    <td>{{ a.full_name or '—' }}</td>
-                                    <td>
-                                        {% if a.is_super_admin %}
-                                            <span class="badge text-dark px-2 py-1.5" style="font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);"><i class="fas fa-crown me-1"></i> ⭐ Супер-админ</span>
-                                        {% else %}
-                                            <span class="badge px-2 py-1.5" style="background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);"><i class="fas fa-user-edit me-1"></i> Админ</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if session.admin_id != a.id and session.is_super_admin %}
-                                            <a href="/admin/admin/delete/{{ a.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить администратора {{ a.username }}?')" style="padding: 6px 14px;">
-                                                <i class="fas fa-trash-alt me-1"></i> Удалить
-                                            </a>
-                                        {% elif session.admin_id == a.id %}
-                                            <span class="system-status-badge">Текущий</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="audit-premium-box mt-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-9">
-                                <h5 class="fw-bold mb-1 audit-title-text"><i class="fas fa-database me-2"></i> Архитектура связей и structure данных SQL</h5>
-                                <p class="small text-muted mb-0">Безопасный просмотр связанных реляционных схем SQL, триггеров автоматического создания таблиц и активных индексов.</p>
+                <div class="col-lg-5">
+                    <div class="data-card">
+                        <h3><i class="fas fa-chart-pie text-warning me-2"></i> Активность по возрастам</h3>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                <span><i class="fas fa-user text-info me-2"></i> 15-20 лет</span>
+                                <strong>{{ age_stats['15-20']|default(0) }} точек</strong>
                             </div>
-                            <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                <a href="/sql_table" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #a78bfa 0%, #764ba2 100%); font-size:12px; box-shadow: 0 4px 12px rgba(167,139,250,0.25);">
-                                    <i class="fas fa-code-branch me-1"></i> Схема таблиц SQL
-                                </a>
+                            <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                <span><i class="fas fa-user text-success me-2"></i> 21-30 лет</span>
+                                <strong>{{ age_stats['21-30']|default(0) }} точек</strong>
+                            </div>
+                            <div class="d-flex justify-content-between p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                                <span><i class="fas fa-user text-warning me-2"></i> 31-50 лет</span>
+                                <strong>{{ age_stats['31-50']|default(0) }} точек</strong>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-    </div>
 
-    <!-- Модальное окно для добавления администратора -->
-    <div id="addAdminModal" class="modal-custom">
-        <div class="modal-custom-content">
-            <div class="modal-custom-header">
-                <h3>➕ Добавить администратора</h3>
-                <span class="close-modal" onclick="closeAddAdminModal()">&times;</span>
+        <div id="tab-pending" class="section">
+            <div class="data-card">
+                <h3><i class="fas fa-hourglass-half text-danger me-2"></i> Новые предложения от жителей</h3>
+                <div class="table-responsive-container">
+                    {% if pending_places %}
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Категория</th>
+                                <th>Адрес</th>
+                                <th>Голоса</th>
+                                <th>Рассмотрение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pending_places %}
+                            <tr>
+                                <td><strong>{{ p.name }}</strong></td>
+                                <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                <td>{{ p.address or 'Координаты зафиксированы' }}</td>
+                                <td><span class="badge bg-secondary">{{ p.votes_count }}</span></td>
+                                <td>
+                                    <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-eye"></i> Открыть</a>
+                                    <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-secondary" onclick="return confirm('Удалить предложение?')">🗑️ Отклонить</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="p-5 text-center text-muted fw-bold">☕ Очередь пуста. Все предложенные локации успешно верифицированы!</div>
+                    {% endif %}
+                </div>
             </div>
-            <form action="/admin/admin/create" method="POST">
-                <div class="form-group">
-                    <label>Логин *</label>
-                    <input type="text" name="username" required placeholder="Введите логин">
+        </div>
+
+        <div id="tab-disliked" class="section">
+            <div class="data-card">
+                <h3><i class="fas fa-thumbs-down text-danger me-2"></i> Места с отрицательным рейтингом (Критика жителей)</h3>
+                <div class="table-responsive-container">
+                    {% if disliked_places %}
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Название локации</th>
+                                <th style="width: 20%;">Категория</th>
+                                <th style="width: 25%;">Адрес</th>
+                                <th style="width: 10%;">Рейтинг</th>
+                                <th style="width: 15%;">Модерация</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in disliked_places %}
+                            <tr>
+                                <td><strong>{{ p.name }}</strong></td>
+                                <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                <td>{{ p.address or 'Красноярск' }}</td>
+                                <td><span class="badge bg-danger px-2 py-1">{{ p.votes_count }}</span></td>
+                                <td>
+                                    <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-disliked-edit me-1"><i class="fas fa-pen-nib me-1"></i> Исправить</a>
+                                    <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-disliked-delete" onclick="return confirm('Полностью удалить задизлайканное место с карты?')"><i class="fas fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="p-5 text-center text-muted fw-bold">☀️ На карте нет мест с отрицательным рейтингом. Жители довольны всеми локациями!</div>
+                    {% endif %}
                 </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" name="email" required placeholder="example@mail.ru">
+            </div>
+        </div>
+
+        <div id="tab-verified" class="section">
+            <div class="data-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                    <h3 class="mb-0"><i class="fas fa-check-circle text-success me-2"></i> Локации, опубликованные на карте</h3>
+                    <div class="action-buttons">
+                        <span class="selected-count" id="selectedCount"></span>
+                        <button class="btn-select-all" onclick="selectAllVisible()" id="selectAllBtn">
+                            <i class="fas fa-check-double me-1"></i> Выбрать все
+                        </button>
+                        <button class="delete-all-btn" onclick="deleteSelected()" id="deleteSelectedBtn" style="display: none;">
+                            <i class="fas fa-trash-alt me-1"></i> Удалить выбранные
+                        </button>
+                        <button class="delete-all-btn" onclick="deleteAllVerified()" id="deleteAllBtn" style="background: #dc2626;">
+                            <i class="fas fa-trash-alt me-1"></i> Удалить все
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Пароль *</label>
-                    <input type="password" name="password" required placeholder="Минимум 6 символов">
+
+                <div class="filter-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." onkeyup="filterTable()">
+                    <select id="categoryFilter" onchange="filterTable()">
+                        <option value="">Все категории</option>
+                        {% for cat in categories_stats %}
+                        <option value="{{ cat.name }}">{{ cat.icon }} {{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="text-muted" id="filterCount"></span>
                 </div>
-                <div class="form-group">
-                    <label>Полное имя</label>
-                    <input type="text" name="full_name" placeholder="Иван Иванов">
+
+                <div class="table-responsive-container">
+                    {% if verified_places %}
+                    <table class="table mb-0" id="verifiedTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;"></th>
+                                <th style="width: 8%;">ID</th>
+                                <th style="width: 27%;">Название</th>
+                                <th style="width: 15%;">Атмосфера</th>
+                                <th style="width: 20%;">Адрес</th>
+                                <th style="width: 10%;">Рейтинг</th>
+                                <th style="width: 15%;">Управление</th>
+                            </tr>
+                        </thead>
+                        <tbody id="verifiedTableBody">
+                            {% for p in verified_places %}
+                            <tr data-name="{{ p.name|lower }}" data-category="{{ p.category.name }}" data-id="{{ p.id }}">
+                                <td class="text-center"><input type="checkbox" class="place-checkbox" value="{{ p.id }}"></td>
+                                <td class="text-center">#{{ p.id }}</td>
+                                <td><strong>{{ p.name }}</strong></td>
+                                <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                <td>{{ p.address or 'Красноярск' }}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ p.votes_count }}</span></td>
+                                <td class="verified-table-actions">
+                                    <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1"><i class="fas fa-sliders-h"></i> Ред.</a>
+                                    <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить точку с карты безвозвратно?')">🗑️</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="p-5 text-center text-muted fw-bold">🗺️ Одобренных точек пока нет.</div>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+
+        <div id="tab-complaints" class="section">
+            <div class="data-card">
+                <h3><i class="fas fa-exclamation-triangle text-warning me-2"></i> Жалобы на несоответствие категории</h3>
+                <div class="table-responsive-container">
+                    <table class="table mb-0" id="complaintsTable">
+                        <thead>
+                            <tr>
+                                <th>Локация</th>
+                                <th>Атмосфера</th>
+                                <th>Жалобы</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsTableBody">
+                            {% for p in places_with_complaints %}
+                            <tr id="complaint-row-{{ p.id }}">
+                                <td><strong>{{ p.name }}</strong></td>
+                                <td>{{ p.category.icon }} {{ p.category.name }}</td>
+                                <td><span class="badge bg-danger">🚨 Репортов: {{ p.complaints_count }}</span></td>
+                                <td>
+                                    <a href="/admin/place/edit/{{ p.id }}" class="btn-action-premium btn-premium-success me-1"><i class="fas fa-sync-alt"></i> Сменить эмоцию</a>
+                                    <button class="btn-action-premium btn-premium-secondary me-1" onclick="resolveComplaint({{ p.id }})"><i class="fas fa-check-circle"></i> Исправлено</button>
+                                    {% if session.is_super_admin %}
+                                    <a href="/admin/complaints/clear/{{ p.id }}" class="btn-action-premium btn-premium-secondary me-1" onclick="return confirm('Сбросить счётчик жалоб?')"><i class="fas fa-broom"></i> Сбросить</a>
+                                    {% endif %}
+                                    <a href="/admin/place/delete/{{ p.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Полностью удалить точку с карты?')">🗑️ Удалить</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if not places_with_complaints %}
+                    <div class="p-5 text-center text-muted fw-bold" id="noComplaintsMessage">☀️ Жалоб нет. Все локации соответствуют выбранным эмоциям!</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-tokens" class="section">
+            <div class="data-card">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h3 class="mb-0"><i class="fas fa-key text-primary me-2"></i> Токены регистрации</h3>
+                </div>
+
                 {% if session.is_super_admin %}
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" name="is_super_admin" id="is_super_admin">
-                    <label for="is_super_admin">⭐ Супер-администратор</label>
+                <div style="background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 25px;">
+                    <h5 style="font-size: 14px; font-weight: 700; margin-bottom: 15px;"><i class="fas fa-plus-circle text-success me-2"></i> Создать новый токен</h5>
+                    <form method="POST" action="/admin/tokens/generate" class="form-inline">
+                        <label class="me-2">Срок действия (дней):</label>
+                        <input type="number" name="expires_days" value="7" min="1" max="30" required style="background: white;">
+                        <button type="submit" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <i class="fas fa-magic"></i> Сгенерировать токен
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i> Только супер-администратор может управлять токенами регистрации.
                 </div>
                 {% endif %}
-                <div class="form-actions">
-                    <button type="submit" class="btn-modal btn-modal-primary">➕ Создать</button>
-                    <button type="button" class="btn-modal btn-modal-danger" onclick="closeAddAdminModal()">Отмена</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Переключение вкладок
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
-                if (!tabId) return;
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.section').forEach(section => section.classList.remove('active-section'));
-                const activeSection = document.getElementById(`tab-${tabId}`);
-                if (activeSection) activeSection.classList.add('active-section');
-            });
+                <h5 style="font-size: 13px; font-weight: 700; margin: 20px 0 15px 0;"><i class="fas fa-clock text-primary me-2"></i> Активные токены</h5>
+                <div class="table-responsive-container" style="margin-bottom: 20px;">
+                    {% if active_tokens and active_tokens|length > 0 %}
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Токен</th>
+                                <th>Создан</th>
+                                <th>Истекает</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for token in active_tokens %}
+                            <tr>
+                                <td>
+                                    <code style="font-size: 13px;">{{ token.token[:20] }}...</code>
+                                    <button class="copy-btn ms-2" onclick="copyToClipboard('{{ token.token }}')" title="Скопировать">
+                                        <i class="fas fa-copy"></i> Копировать
+                                    </button>
+                                </td>
+                                <td>{{ token.created_at.strftime('%d.%m.%Y %H:%M') if token.created_at else '—' }}</td>
+                                <td>{{ token.expires_at.strftime('%d.%m.%Y %H:%M') if token.expires_at else '—' }}</td>
+                                <td>
+                                    {% if session.is_super_admin %}
+                                    <a href="/admin/tokens/delete/{{ token.id }}" class="btn-action-premium btn-premium-danger" style="padding: 4px 12px;" onclick="return confirm('Удалить этот токен?')">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">Нет активных токенов. Создайте первый токен выше.</div>
+                    {% endif %}
+                </div>
+
+                {% if used_tokens and used_tokens|length > 0 %}
+                <h5 style="font-size: 13px; font-weight: 700; margin: 20px 0 15px 0;"><i class="fas fa-history text-warning me-2"></i> Недавно использованные</h5>
+                <div class="table-responsive-container">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Токен</th>
+                                <th>Создан</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for token in used_tokens[:5] %}
+                            <tr>
+                                <td><code>{{ token.token[:20] }}...</code></td>
+                                <td>{{ token.created_at.strftime('%d.%m.%Y %H:%M') if token.created_at else '—' }}</td>
+                                <td><span class="badge-used"><i class="fas fa-check"></i> Использован</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="tab-admins" class="section">
+            <div class="data-card">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h3 class="mb-0"><i class="fas fa-users text-primary me-2"></i> Управление доступом рабочей группы</h3>
+                    {% if session.is_super_admin %}
+                    <button class="btn-action-premium btn-premium-success" onclick="openAddAdminModal()" style="background: linear-gradient(135deg, #764ba2 0%, #6366f1 100%);">
+                        <i class="fas fa-user-plus me-1"></i> Добавить сотрудника
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="table-responsive-container">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Логин</th>
+                                <th>Email</th>
+                                <th>Имя</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in admins %}
+                            <tr>
+                                <td>{{ a.id }}</td>
+                                <td><strong>{{ a.username }}</strong></td>
+                                <td>{{ a.email }}</td>
+                                <td>{{ a.full_name or '—' }}</td>
+                                <td>
+                                    {% if a.is_super_admin %}
+                                        <span class="badge text-dark px-2 py-1.5" style="font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);"><i class="fas fa-crown me-1"></i> ⭐ Супер-админ</span>
+                                    {% else %}
+                                        <span class="badge px-2 py-1.5" style="background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);"><i class="fas fa-user-edit me-1"></i> Админ</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if session.admin_id != a.id and session.is_super_admin %}
+                                        <a href="/admin/admin/delete/{{ a.id }}" class="btn-action-premium btn-premium-danger" onclick="return confirm('Удалить администратора {{ a.username }}?')" style="padding: 6px 14px;">
+                                            <i class="fas fa-trash-alt me-1"></i> Удалить
+                                        </a>
+                                    {% elif session.admin_id == a.id %}
+                                        <span class="system-status-badge">Текущий</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="audit-premium-box mt-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-9">
+                            <h5 class="fw-bold mb-1 audit-title-text"><i class="fas fa-database me-2"></i> Архитектура связей и structure данных SQL</h5>
+                            <p class="small text-muted mb-0">Безопасный просмотр связанных реляционных схем SQL, триггеров автоматического создания таблиц и активных индексов.</p>
+                        </div>
+                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                            <a href="/sql_table" class="btn-action-premium btn-premium-success" style="background: linear-gradient(135deg, #a78bfa 0%, #764ba2 100%); font-size:12px; box-shadow: 0 4px 12px rgba(167,139,250,0.25);">
+                                <i class="fas fa-code-branch me-1"></i> Схема таблиц SQL
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="addAdminModal" class="modal-custom">
+    <div class="modal-custom-content">
+        <div class="modal-custom-header">
+            <h3>➕ Добавить администратора</h3>
+            <span class="close-modal" onclick="closeAddAdminModal()">&times;</span>
+        </div>
+        <form action="/admin/admin/create" method="POST">
+            <div class="form-group">
+                <label>Логин *</label>
+                <input type="text" name="username" required placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" name="email" required placeholder="example@mail.ru">
+            </div>
+            <div class="form-group">
+                <label>Пароль *</label>
+                <input type="password" name="password" required placeholder="Минимум 6 символов">
+            </div>
+            <div class="form-group">
+                <label>Полное имя</label>
+                <input type="text" name="full_name" placeholder="Иван Иванов">
+            </div>
+            {% if session.is_super_admin %}
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="is_super_admin" id="is_super_admin">
+                <label for="is_super_admin">⭐ Супер-администратор</label>
+            </div>
+            {% endif %}
+            <div class="form-actions">
+                <button type="submit" class="btn-modal btn-modal-primary">➕ Создать</button>
+                <button type="button" class="btn-modal btn-modal-danger" onclick="closeAddAdminModal()">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function switchToTab(tabId) {
+        if (!tabId) return;
+
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+            if (nav.getAttribute('data-tab') === tabId) {
+                nav.classList.add('active');
+            }
         });
 
-        // Функции для модального окна
-        function openAddAdminModal() {
-            document.getElementById('addAdminModal').style.display = 'flex';
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active-section');
+        });
+
+        const activeSection = document.getElementById(`tab-${tabId}`);
+        if (activeSection) {
+            activeSection.classList.add('active-section');
         }
 
-        function closeAddAdminModal() {
-            document.getElementById('addAdminModal').style.display = 'none';
-        }
+        localStorage.setItem('admin_active_tab', tabId);
+    }
 
-        // Закрытие при клике вне окна
-        window.onclick = function(event) {
-            const modal = document.getElementById('addAdminModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+    function getTabFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('tab');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let tabFromUrl = getTabFromUrl();
+
+        if (tabFromUrl) {
+            switchToTab(tabFromUrl);
+        } else {
+            const savedTab = localStorage.getItem('admin_active_tab');
+            if (savedTab) {
+                switchToTab(savedTab);
+            } else {
+                switchToTab('stats');
             }
         }
 
-        // Автоскрытие flash-сообщений
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    if (alert) alert.style.display = 'none';
-                }, 4000);
+        document.querySelectorAll('.place-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateSelectedCount);
+        });
+
+        updateSelectedCount();
+    });
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            if (tabId) {
+                switchToTab(tabId);
+                const newUrl = window.location.pathname + '?tab=' + tabId;
+                window.history.pushState({}, '', newUrl);
+            }
+        });
+    });
+
+    function selectAllVisible() {
+        const checkboxes = document.querySelectorAll('.place-checkbox');
+        const visibleCheckboxes = [];
+
+        checkboxes.forEach(cb => {
+            const row = cb.closest('tr');
+            if (row && row.style.display !== 'none') {
+                visibleCheckboxes.push(cb);
+            }
+        });
+
+        if (visibleCheckboxes.length === 0) return;
+
+        const allChecked = visibleCheckboxes.every(cb => cb.checked === true);
+        const selectAllBtn = document.getElementById('selectAllBtn');
+
+        if (allChecked) {
+            visibleCheckboxes.forEach(cb => cb.checked = false);
+            if (selectAllBtn) selectAllBtn.innerHTML = '<i class="fas fa-check-double me-1"></i> Выбрать все';
+        } else {
+            visibleCheckboxes.forEach(cb => cb.checked = true);
+            if (selectAllBtn) selectAllBtn.innerHTML = '<i class="fas fa-times me-1"></i> Снять все';
+        }
+
+        updateSelectedCount();
+    }
+
+    function filterTable() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const rows = document.querySelectorAll('#verifiedTableBody tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name') || '';
+            const category = row.getAttribute('data-category') || '';
+
+            const matchesSearch = name.includes(searchInput);
+            const matchesCategory = !categoryFilter || category === categoryFilter;
+
+            if (matchesSearch && matchesCategory) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                const checkbox = row.querySelector('.place-checkbox');
+                if (checkbox) checkbox.checked = false;
+            }
+        });
+
+        const filterCount = document.getElementById('filterCount');
+        if (filterCount) {
+            filterCount.textContent = `Показано: ${visibleCount} из ${rows.length}`;
+        }
+
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        if (selectAllBtn) {
+            selectAllBtn.innerHTML = '<i class="fas fa-check-double me-1"></i> Выбрать все';
+        }
+
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const checkedBoxes = document.querySelectorAll('.place-checkbox:checked');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+
+        if (selectedCountSpan) {
+            if (checkedBoxes.length > 0) {
+                selectedCountSpan.textContent = `✓ Выбрано: ${checkedBoxes.length}`;
+                if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'inline-block';
+            } else {
+                selectedCountSpan.textContent = '';
+                if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'none';
+            }
+        }
+
+        if (selectAllBtn) {
+            const checkboxes = document.querySelectorAll('.place-checkbox');
+            const visibleCheckboxes = [];
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                if (row && row.style.display !== 'none') {
+                    visibleCheckboxes.push(cb);
+                }
             });
-        }, 100);
-    </script>
+
+            const allVisibleChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked === true);
+            if (allVisibleChecked && visibleCheckboxes.length > 0) {
+                selectAllBtn.innerHTML = '<i class="fas fa-times me-1"></i> Снять все';
+            } else {
+                selectAllBtn.innerHTML = '<i class="fas fa-check-double me-1"></i> Выбрать все';
+            }
+        }
+    }
+
+    function deleteSelected() {
+        const checkedBoxes = document.querySelectorAll('.place-checkbox:checked');
+
+        if (checkedBoxes.length === 0) {
+            alert('Не выбрано ни одного места');
+            return;
+        }
+
+        if (confirm(`Вы уверены, что хотите удалить ${checkedBoxes.length} место(а)? Это действие нельзя отменить.`)) {
+            const ids = Array.from(checkedBoxes).map(cb => cb.value);
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/places/delete-multiple';
+
+            ids.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'place_ids';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function deleteAllVerified() {
+        const totalPlaces = {{ total_places }};
+        if (totalPlaces === 0) {
+            alert('Нет мест для удаления');
+            return;
+        }
+
+        if (confirm(`ВНИМАНИЕ! Вы собираетесь удалить ВСЕ ${totalPlaces} одобренных мест. Это действие нельзя отменить. Продолжить?`)) {
+            window.location.href = '/admin/places/delete-all';
+        }
+    }
+
+    function openAddAdminModal() {
+        document.getElementById('addAdminModal').style.display = 'flex';
+    }
+
+    function closeAddAdminModal() {
+        document.getElementById('addAdminModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('addAdminModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                if (alert) alert.style.display = 'none';
+            }, 4000);
+        });
+    }, 100);
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.createElement('div');
+            toast.className = 'alert alert-success';
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+            toast.style.padding = '12px 20px';
+            toast.style.borderRadius = '12px';
+            toast.style.backgroundColor = '#10b981';
+            toast.style.color = 'white';
+            toast.style.fontWeight = '600';
+            toast.innerHTML = '<i class="fas fa-check-circle me-2"></i>Токен скопирован!';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }).catch(() => {
+            alert('Не удалось скопировать токен');
+        });
+    }
+
+    function resolveComplaint(placeId) {
+        if (!confirm('Пометить жалобу как исправленную?')) return;
+
+        fetch(`/api/complaint/resolve/${placeId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const row = document.getElementById(`complaint-row-${placeId}`);
+                if (row) {
+                    row.remove();
+                }
+                showToast(data.message, 'success');
+                const tbody = document.getElementById('complaintsTableBody');
+                if (tbody && tbody.children.length === 0) {
+                    const container = document.querySelector('#tab-complaints .table-responsive-container');
+                    if (container && !document.getElementById('noComplaintsMessage')) {
+                        container.innerHTML = '<div class="p-5 text-center text-muted fw-bold" id="noComplaintsMessage">☀️ Жалоб нет. Все локации соответствуют выбранным эмоциям!</div>';
+                    }
+                }
+            } else {
+                showToast(data.error || 'Ошибка при исправлении жалобы', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Произошла ошибка', 'error');
+        });
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'}`;
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '9999';
+        toast.style.padding = '12px 20px';
+        toast.style.borderRadius = '12px';
+        toast.style.backgroundColor = type === 'success' ? '#10b981' : '#ef4444';
+        toast.style.color = 'white';
+        toast.style.fontWeight = '600';
+        toast.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+        toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
 </body>
 </html>
